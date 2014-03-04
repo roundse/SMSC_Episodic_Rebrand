@@ -1,29 +1,29 @@
 function [wy wx] = recurrent_oja(output, old_output, input, ...
     output_weights, input_weights, value)
 
-global gain_oja;
 if nargin < 6
     value = 1;
 end
 
 global learning_rate;
-%alpha = .9;
-alpha = sqrt(gain_oja);
+alpha = 5;
+alpha = sqrt(alpha);
 eta = learning_rate;
 
 x = input;
 y_old = old_output;
 y = output;
-wx = input_weights;
-wy = output_weights; 
+wx = output_weights';
+wy = input_weights';
+
+n = length(x);
+m = length(y);
 
 [J I] = size(wx);
 
-% can probably be refactored to matrix multiplication for speed
 for i = 1:I
     for j = 1:J
-        wx_cur = wx(j,i);
-        if wx_cur ~= 0
+        if wx(j,i) > eps
             wx_cur = wx(j,i);
             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
             wx(j,i) = wx_cur + delta_wx;
@@ -31,14 +31,13 @@ for i = 1:I
     end
 end
 
-[L K] = size(wy);
-
-for k = 1:K
-    for l = 1:L
-        wy_cur = wy(l,k);
-        if wy_cur ~= 0
-            delta_wy = eta*y(k) * (alpha*value*y_old(k) - y*wy(l,:)');
-            wy(l,k) = wy_cur + delta_wy;
+[J I] = size(wy);
+for i = 1:I
+    for j = 1:J
+        if wy(j,i) > eps
+            wy_cur = wy(j,i);
+            delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
+            wy(j,i) = wy_cur + delta_wy;
         end
     end
 end

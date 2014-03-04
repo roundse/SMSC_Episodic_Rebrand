@@ -58,6 +58,7 @@ else
 
     HVAL = value;
 
+    
     hpc_in_queue{queue_pos} = input;
     hpc_weight_queue{queue_pos} = input_weights;
 end

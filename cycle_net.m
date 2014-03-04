@@ -13,6 +13,7 @@ global w_place_to_hpc;
 global w_food_to_hpc;
 
 global is_learning;
+global p_hpc_stim;
 
 if nargin < 4
     value = 1;
@@ -29,15 +30,16 @@ for j = 3:cycles
     cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
     cycle_food(food_out, w_hpc_to_food, hpc_out, value);
 
-    cycle_hpc(hpc_out, w_place_to_hpc, place_out*3, value);
-    cycle_hpc(hpc_out, w_food_to_hpc, food_out*3, value);
+    cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
+    cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
 
-%     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
-%     cycle_hpc(hpc_out, w_place_to_hpc,  place_stim, value);
+    cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
+    %cycle_hpc(hpc_out, w_place_to_hpc, p_hpc_stim, value);
+
     
     hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-    place_region(j,:) = cycle_place({place_region(j,:), hpc(j,:)}, is_learning);
-    food(j,:) = cycle_food({food(j,:), hpc(j,:)}, is_learning);
+    place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:)}, is_learning);
+    food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
 end
 
 end

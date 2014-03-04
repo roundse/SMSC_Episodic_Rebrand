@@ -12,6 +12,7 @@ function returnable = cycle_food(food_in, input_weights, input, value)
     global w_hpc_to_food;
        
     food_eye = eye(FOOD_CELLS);
+      
     queue_pos = length(food_in_queue)+1;
     
     if nargin < 3

@@ -8,13 +8,6 @@ global cycles
 global learning_rate;
 global TRIAL_DIR;
 
-global hpc;
-global place_region;
-global food;
-
-f_to_h = mean(food * w_food_to_hpc);
-p_to_h = mean(place_region * w_place_to_hpc);
-
 filename = horzcat(TRIAL_DIR, section, '_variables');
 save(filename);
 
@@ -59,19 +52,23 @@ if is_disp_weights
     colorbar();
     drawnow;
 
+    global hpc;
+    global place_region;
+    global food;
+
     figure;
     hist(hpc);
-    title(horzcat(section, ' HPC cumulative values'));
+    title(horzcat(section, ' HPC cumulative inputs'));
     drawnow;
 
     figure;
     hist(place_region);
-    title(horzcat(section, ' Place cumulative values'));
+    title(horzcat(section, ' Place cumulative inputs'));
     drawnow;
 
     figure;
     hist(food);
-    title(horzcat(section, ' Food cumulative values'));
+    title(horzcat(section, ' Food cumulative inputs'));
     drawnow;
 
     global hpc_responses_to_place;
