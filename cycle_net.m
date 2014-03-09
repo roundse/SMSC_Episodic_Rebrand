@@ -34,8 +34,6 @@ for j = 3:cycles
     cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
 
     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
-    %cycle_hpc(hpc_out, w_place_to_hpc, p_hpc_stim, value);
-
     
     hpc(j,:) = cycle_hpc(hpc_out, is_learning);
     place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:)}, is_learning);

@@ -26,8 +26,8 @@ if nargin < 3
         total_inputs = total_inputs + place_in_queue{i} * place_weight_queue{i};
     end
     
-    place_out = run_layer(place_in, place_eye, total_inputs, ...
-        w_place_to_place, 0);
+    place_out = activity(place_in, place_eye, total_inputs, ...
+        w_place_to_place);
     
     returnable = place_out;
     

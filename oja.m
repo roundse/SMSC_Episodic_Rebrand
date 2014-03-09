@@ -35,14 +35,11 @@ function all_weights = oja(all_inputs, all_weights, ys, value)
         end
         
         x = x';    
-%         y1 = w*x';
-%         y1 = soft_activity(0, y1, 5);
-%         y2 = ys(250-n);
         y = ys(n);
         
         heb = value*x.*y;
         
-        oja = (y.^2).*w; % * value;
+        oja = (y.^2).*w;
      
         dw = lr*(heb - oja);
         w = w + dw;
@@ -62,32 +59,4 @@ function all_weights = oja(all_inputs, all_weights, ys, value)
     end
 
 end
-
-% wx = oja(output, input, weights, value)
-% 
-% if nargin < 4
-%     value = 1;
-% end
-% 
-% global learning_rate;
-% eta = learning_rate;
-% 
-% x = input;
-% y = output;
-% wx = weights;
-% 
-% n = length(x);
-% m = length(y);
-% 
-% [J I] = size(wx);
-% 
-% for i = 1:I
-%     for j = 1:J
-%         if wx(j,i) ~= 0
-%             wx_cur = wx(j,i);
-%             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
-%             wx(j,i) = wx_cur + value*delta_wx;
-%         end
-%     end
-% end
 

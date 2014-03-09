@@ -191,7 +191,7 @@ for k=1:15
 
             hpc_reinf(j,:) = cycle_hpc(hpc_out, is_learning);
             place_reinf(j,:) = cycle_place({place_region(j-1,:), hpc(j,:)}, is_learning);
-            food_out(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
+            food_reinf(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
         end
         hpc_responses_to_place(i,:) = mean(hpc_reinf);
     end

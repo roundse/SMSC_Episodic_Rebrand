@@ -24,8 +24,8 @@ function returnable = cycle_food(food_in, input_weights, input, value)
     		total_inputs = total_inputs + food_in_queue{i} * food_weight_queue{i};
         end
 
-        food_out = run_layer(food_in, food_eye, total_inputs, ...
-            w_food_to_food, 0);
+        food_out = activity(food_in, food_eye, total_inputs, ...
+            w_food_to_food);
         
         returnable = food_out;
 

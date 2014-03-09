@@ -20,8 +20,8 @@ if nargin < 3
         total_inputs = total_inputs + hpc_in_queue{i} * hpc_weight_queue{i};
     end
     
-    food_hpc_out = run_layer(hpc_in, hpc_eye, total_inputs, ...
-        w_hpc_to_hpc, 0);
+    food_hpc_out = activity(hpc_in, hpc_eye, total_inputs, ...
+        w_hpc_to_hpc);
     
     returnable = food_hpc_out;
     
