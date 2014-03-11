@@ -4,9 +4,14 @@ global w_place_to_hpc;
 global w_hpc_to_place;
 global w_food_to_hpc;
 global w_hpc_to_food;
+global w_hpc_to_hpc;
+global hpc;
+global place_region;
+global food;
 global cycles
 global learning_rate;
 global TRIAL_DIR;
+global PLACE_SLOTS;
 
 filename = horzcat(TRIAL_DIR, section, '_variables');
 save(filename);
@@ -33,6 +38,12 @@ if is_disp_weights
     drawnow;
 
     figure;
+    title(horzcat(section, ' HPC to HPC'));
+    imagesc(w_hpc_to_hpc);
+    colorbar();
+    drawnow;
+
+    figure;
     subplot(1,2,1);
     wx_fhpc_temp = w_food_to_hpc(w_food_to_hpc ~= 0);
     hist(wx_fhpc_temp);
@@ -52,10 +63,6 @@ if is_disp_weights
     colorbar();
     drawnow;
 
-    global hpc;
-    global place_region;
-    global food;
-
     figure;
     hist(hpc);
     title(horzcat(section, ' HPC cumulative inputs'));
@@ -73,7 +80,12 @@ if is_disp_weights
 
     global hpc_responses_to_place;
 
-    if hpc_responses_to_place ~= 0
+    if hpc_responses_to_place
+        
+        if (sum(var(hpc_responses_to_place)) < 4)
+           variance = var(hpc_responses_to_place)
+           error('bland outputs...'); 
+        end
         figure;
         subplot(1,2,1);
         hist(hpc_responses_to_place);

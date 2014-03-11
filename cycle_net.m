@@ -13,13 +13,8 @@ global w_place_to_hpc;
 global w_food_to_hpc;
 
 global is_learning;
-global p_hpc_stim;
 
-if nargin < 4
-    value = 1;
-end
-
-for j = 3:cycles
+for j = 2:cycles
     hpc_out = hpc(j-1,:);
     place_out = place_region(j-1,:);
     food_out = food(j-1, :);

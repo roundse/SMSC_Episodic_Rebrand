@@ -11,9 +11,10 @@ global VALUE;
 gain_step = .04;
 gain_max = 0.7;
 
-runs = 5;
+runs = 10;
 cycles = 14;
 VALUE = [6 1.5]; %worm, peanut
+init_val = VALUE;
 gain_oja = 0.7;
 learning_rate = 0.5;
 
@@ -39,10 +40,13 @@ while gain_oja <= gain_max
     for i = 1:runs
         TRIAL_DIR = horzcat(DIR, '\', num2str(i),'\');
         mkdir(TRIAL_DIR);
+        init_val = VALUE;
+        
         [place_responses(i,:) side_pref checked_place] = bg_experiment(cycles, ...
             learning_rate, gain_oja, is_disp_weights);
-        checked_places{i} = checked_place;
+        
         place_stats(i,:) = mean(side_pref);
+        checked_places{i} = checked_place;
         is_disp_weights = false;
         message = horzcat('trial ', num2str(i), ' complete');
         disp(message);
@@ -50,6 +54,7 @@ while gain_oja <= gain_max
 
     trials{pos} = {gain_oja, mean(place_stats(:,2)), mean(place_stats(:,1)), ...
         place_responses, place_stats, checked_places};
+
     save(filename,'trials', 'VALUE');
     
     gain_oja = gain_oja + gain_step;
