@@ -5,7 +5,7 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     persist = 0.1;
 
     len = length(net_in);
-    noise = 0.001*rand(1,len)-0.0005;
+    noise = 0.0001*rand(1,len)-0.00005;
     
     stim_in = INP_STR*(stimulus*stim_weights');
     intranet_in = 1*(net_in*net_to_netweights');

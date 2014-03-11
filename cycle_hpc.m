@@ -19,7 +19,7 @@ if nargin < 3
         temp_input = total_inputs + hpc_in_queue{i} * hpc_weight_queue{i};
         
         if input_weights
-           w_hpc_to_hpc = oja(hpc_in, temp_input, w_hpc_to_hpc); 
+           w_hpc_to_hpc = oja(hpc_in, temp_input, w_hpc_to_hpc, HVAL); 
         end
         total_inputs = total_inputs + temp_input;
     end
@@ -28,30 +28,13 @@ if nargin < 3
         w_hpc_to_hpc);
     
     returnable = food_hpc_out;
-    
-    if input_weights
-        % delete internal self weights
-        for l = 1:length(w_hpc_to_hpc)
-            w_hpc_to_hpc(l,l) = 0;
-        end
-        
-        %hpc_weight_queue{queue_pos} = w_hpc_to_hpc;
-        %hpc_in_queue{queue_pos} = food_hpc_out;
 
-        %w_hpc_to_hpc = oja(returnable, total_inputs, w_hpc_to_hpc);
-        % w_hpc_to_hpc = oja(hpc_in, total_inputs, w_hpc_to_hpc);
-        
-        %hpc_weight_queue = oja(hpc_in_queue, hpc_weight_queue, food_hpc_out, HVAL);
-
-        % remove them from the weight lists so they don't mess up the
-        %temp_w = hpc_weight_queue{queue_pos};
-        %w_hpc_to_hpc = temp_w;
-        
-        hpc_weight_queue{queue_pos} = [];
-        hpc_in_queue{queue_pos} = [];
-       
+    for l = 1:length(w_hpc_to_hpc)
+        w_hpc_to_hpc(l,l) = 0;
     end
-    
+
+    hpc_weight_queue{queue_pos} = [];
+    hpc_in_queue{queue_pos} = [];    
     hpc_in_queue = {};
 else
     % return the weights given if no weight in queue

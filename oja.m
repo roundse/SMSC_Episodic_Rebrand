@@ -1,4 +1,4 @@
-function wx = oja (output, input, weights)
+function wx = oja (output, input, weights, val)
     global learning_rate;
     eta = learning_rate;
 
@@ -16,7 +16,7 @@ function wx = oja (output, input, weights)
                 xi = x(i);
                 yj = y(j);
                 
-                heb = yj*xi;
+                heb = val*yj*xi;
                 oja = wx_cur*yj*yj;           
                 
                 delta_wx = eta*(heb-oja);

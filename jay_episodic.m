@@ -13,10 +13,10 @@ gain_max = 0.7;
 
 runs = 10;
 cycles = 14;
-VALUE = [6 1.5]; %worm, peanut
+VALUE = [6.5 0.5]; %worm, peanut
 init_val = VALUE;
 gain_oja = 0.7;
-learning_rate = 0.5;
+learning_rate = 0.3;
 
 
 global pos

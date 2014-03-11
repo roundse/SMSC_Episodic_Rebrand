@@ -16,7 +16,7 @@ FOOD_CELLS = 2;
 PLACE_CELLS = 14;
 
 EXT_CONNECT = .2;                   % Chance of connection = 10%
-INT_CONNECT = .2;
+INT_CONNECT = .1;
 
 global VALUE;
 
@@ -285,7 +285,7 @@ for k = 1:testing_trials
     bland_input = neutral_input/max(neutral_input) + rand(1,14)/2;
     
     for i = 1:PLACE_CELLS
-        cycle_net(PLACE_SLOTS(2,:), [0.3 0.3], cycles, 0);
+        cycle_net(PLACE_SLOTS(2,:), [0.1 0.], cycles, 0);
     end
     hpc_place_responses(k,:) = mean(hpc(3:cycles,:));
     checked_places(k,:) = find_place(hpc_place_responses(k,:));

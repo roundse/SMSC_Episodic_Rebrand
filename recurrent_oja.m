@@ -24,7 +24,7 @@ m = length(y);
 % output weights
 for i = 1:I
     for j = 1:J
-        if wx(j,i) > eps
+        if wx(j,i) ~= 0
             wx_cur = wx(j,i);
             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
             wx(j,i) = wx_cur + delta_wx;
@@ -36,7 +36,7 @@ end
 [J I] = size(wy);
 for i = 1:I
     for j = 1:J
-        if wy(j,i) > eps
+        if wy(j,i) ~= 0
             wy_cur = wy(j,i);
             delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
             wy(j,i) = wy_cur + delta_wy;
