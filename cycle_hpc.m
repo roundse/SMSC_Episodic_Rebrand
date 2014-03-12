@@ -19,7 +19,7 @@ if nargin < 3
         temp_input = total_inputs + hpc_in_queue{i} * hpc_weight_queue{i};
         
         if input_weights
-           w_hpc_to_hpc = oja(hpc_in, temp_input, w_hpc_to_hpc, HVAL); 
+           %w_hpc_to_hpc = oja(hpc_in, temp_input, w_hpc_to_hpc, HVAL); 
         end
         total_inputs = total_inputs + temp_input;
     end

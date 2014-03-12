@@ -16,7 +16,7 @@ function wx = oja (output, input, weights, val)
                 xi = x(i);
                 yj = y(j);
                 
-                heb = val*yj*xi;
+                heb = yj*xi; %*val;
                 oja = wx_cur*yj*yj;           
                 
                 delta_wx = eta*(heb-oja);

@@ -11,12 +11,12 @@ global VALUE;
 gain_step = .04;
 gain_max = 0.7;
 
-runs = 10;
+runs = 20;
 cycles = 14;
-VALUE = [6.5 0.5]; %worm, peanut
+VALUE = [7.5 1.5]; %worm, peanut
 init_val = VALUE;
 gain_oja = 0.7;
-learning_rate = 0.3;
+learning_rate = 0.5;
 
 
 global pos
@@ -25,7 +25,6 @@ global TRIAL_DIR;
 DIR = datestr(now);
 DIR = strrep(DIR,':',' ');
 mkdir(DIR);
-
 
 pos = 0;
 place_responses = zeros(runs, 14);

@@ -185,6 +185,10 @@ for k=1:30
 end
 show_weights('Cached with value ', is_disp_weights);
 
+global TRIAL_DIR;
+filename = horzcat(TRIAL_DIR, 'post learning', '_variables');
+save(filename);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 3: Agent stores food in place slots
 %         Have agent recover foods from places, see if it chooses
@@ -282,7 +286,7 @@ hpc_place_responses = zeros(testing_trials,HPC_SIZE);
 checked_places = zeros(testing_trials,14);
 side_pref = zeros(testing_trials,2);
 for k = 1:testing_trials
-    bland_input = neutral_input/max(neutral_input) + rand(1,14)/2;
+    bland_input = neutral_input/max(neutral_input); %+ rand(1,14)/2;
     
     for i = 1:PLACE_CELLS
         cycle_net(PLACE_SLOTS(2,:), [0.3 0.3], cycles, 0);
@@ -291,6 +295,9 @@ for k = 1:testing_trials
     checked_places(k,:) = find_place(hpc_place_responses(k,:));
     [side_pref(k, 1) side_pref(k, 2)] = side_preference(checked_places(k,:));
 end
+
+filename = horzcat(TRIAL_DIR, 'after final trial ', '_variables');
+save(filename);
 
 avg_checks = mean(checked_places);
 
