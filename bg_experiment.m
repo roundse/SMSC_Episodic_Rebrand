@@ -2,7 +2,7 @@ function [avg_checks side_pref checked_places] = bg_experiment(cycles, ...
     learning_rate, gain_oja, is_disp_weights)
 
 global INP_STR;
-INP_STR = 2;
+INP_STR = 1;
 global GAIN;
 GAIN = 5;
 
@@ -278,7 +278,6 @@ for k=1:collect_size
 end
 
 % food is retrieved from store
-is_learning = 0;
 neutral_input = sum(PLACE_SLOTS);
 
 testing_trials = 6;
@@ -286,7 +285,7 @@ hpc_place_responses = zeros(testing_trials,HPC_SIZE);
 checked_places = zeros(testing_trials,14);
 side_pref = zeros(testing_trials,2);
 for k = 1:testing_trials
-    bland_input = neutral_input/max(neutral_input); %+ rand(1,14)/2;
+    bland_input = neutral_input/max(neutral_input)+ rand(1,14)/2;
     
     for i = 1:PLACE_CELLS
         cycle_net(PLACE_SLOTS(2,:), [0.3 0.3], cycles, 0);

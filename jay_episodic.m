@@ -11,12 +11,11 @@ global VALUE;
 gain_step = .04;
 gain_max = 0.7;
 
-runs = 20;
+runs = 10;
 cycles = 14;
-VALUE = [7.5 1.5]; %worm, peanut
-init_val = VALUE;
+VALUE = [7.5 2]; %worm, peanut
 gain_oja = 0.7;
-learning_rate = 0.5;
+learning_rate = 0.3;
 
 
 global pos
@@ -31,7 +30,7 @@ place_responses = zeros(runs, 14);
 place_stats = zeros(runs, 2);
 filename = horzcat(DIR, '\trial_data', '.mat');
 
-is_disp_weights = true;
+is_disp_weights = false;
 % profile on
 while gain_oja <= gain_max
     pos = pos+1;
