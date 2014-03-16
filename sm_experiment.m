@@ -18,7 +18,7 @@ global PLACE_CELLS;
 FOOD_CELLS = 2;
 PLACE_CELLS = 14;
 
-EXT_CONNECT = .2;                   % Chance of connection = 10%
+EXT_CONNECT = .2;                   % Chance of connection = 20%
 INT_CONNECT = .2;
 
 global VALUE;

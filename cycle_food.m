@@ -27,13 +27,6 @@ function returnable = cycle_food(food_in, input_weights, input, value)
         food_out = activity(food_in, food_eye, total_inputs, ...
             w_food_to_food);
         
-%         if (food_out(1)>food_out(2))
-%             food_out(1) = food_out(1);
-%             food_out(2) = 0;
-%         else
-%             food_out(1) = 0;
-%             food_out(2) = food_out(2);
-%         end
         
         returnable = food_out;
 
