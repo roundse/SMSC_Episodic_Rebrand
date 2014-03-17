@@ -2,7 +2,6 @@ function [avg_checks side_pref checked_places] = bg_experiment(cycles, ...
     learning_rate, gain_oja, is_disp_weights)
 
 global INP_STR;
-INP_STR = 1;
 global GAIN;
 GAIN = 5;
 
@@ -277,33 +276,10 @@ for k=1:collect_size
     end
 end
 
-% food is retrieved from store
-neutral_input = sum(PLACE_SLOTS);
-
-testing_trials = 6;
-hpc_place_responses = zeros(testing_trials,HPC_SIZE);
-checked_places = zeros(testing_trials,14);
-side_pref = zeros(testing_trials,2);
-for k = 1:testing_trials
-    bland_input = neutral_input/max(neutral_input)+ rand(1,14)/2;
-    
-    for i = 1:PLACE_CELLS
-        cycle_net(PLACE_SLOTS(2,:), [0.3 0.3], cycles, 0);
-    end
-    hpc_place_responses(k,:) = mean(hpc(3:cycles,:));
-    checked_places(k,:) = find_place(hpc_place_responses(k,:));
-    [side_pref(k, 1) side_pref(k, 2)] = side_preference(checked_places(k,:));
-end
+[checked_places side_pref avg_checks ] = place_slot_check; % mean_spot_check();
 
 filename = horzcat(TRIAL_DIR, 'after final trial ', '_variables');
 save(filename);
-
-avg_checks = mean(checked_places);
-
-figure;
-title('Place dist');
-plot(avg_checks);
-drawnow;
 
 varlist = {'hpc','place_region','food', 'place_in_queue', ...
     'place_weight_queue', 'hpc_in_queue', 'hpc_weight_queue', ...

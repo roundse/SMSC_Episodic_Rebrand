@@ -5,15 +5,18 @@ clc;
 
 global learning_rate;
 global gain_oja;
+global INP_STR;
 global cycles;
 global VALUE;
 
+INP_STR = 2;
 gain_step = .04;
 gain_max = 0.7;
 
-runs = 10;
-cycles = 14;
-VALUE = [15 2]; %worm, peanut
+runs = 20;
+cycles = 14; %14;
+values = [6 1.5; 0 2; -1 2];
+
 gain_oja = 0.7;
 learning_rate = 0.3;
 
@@ -30,10 +33,11 @@ place_responses = zeros(runs, 14);
 place_stats = zeros(runs, 2);
 filename = horzcat(DIR, '\trial_data', '.mat');
 
-is_disp_weights = true;
+is_disp_weights = 0;
+v = 1;
 % profile on
-while gain_oja <= gain_max
-    pos = pos+1;
+while v <= length(values)
+    VALUE = values(v,:); %worm, peanut
 
     for i = 1:runs
         TRIAL_DIR = horzcat(DIR, '\', num2str(i),'\');
@@ -50,13 +54,12 @@ while gain_oja <= gain_max
         disp(message);
     end
 
-    trials{pos} = {gain_oja, mean(place_stats(:,2)), mean(place_stats(:,1)), ...
+    trials{v} = {INP_STR, VALUE, mean(place_stats(:,2)), mean(place_stats(:,1)), ...
         place_responses, place_stats, checked_places};
-
-    save(filename,'trials', 'VALUE');
     
-    gain_oja = gain_oja + gain_step;
+    v = v+1;
 end
+save(filename,'trials');
 % profile viewer
 % profile off
 end
