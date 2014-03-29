@@ -1,4 +1,4 @@
-function [avg_checks side_pref checked_places] = bg_experiment(cycles, ... 
+function [avg_checks side_pref checked_places first_checked] = bg_experiment(cycles, ... 
     learning_rate, gain_oja, is_disp_weights)
 
 global INP_STR;
@@ -276,7 +276,7 @@ for k=1:collect_size
     end
 end
 
-[checked_places side_pref avg_checks ] = place_slot_check; % mean_spot_check();
+[checked_places side_pref avg_checks first_checked] = place_slot_check; % mean_spot_check();
 
 filename = horzcat(TRIAL_DIR, 'after final trial ', '_variables');
 save(filename);
