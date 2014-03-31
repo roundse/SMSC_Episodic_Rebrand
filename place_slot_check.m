@@ -16,18 +16,17 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
 
     testing_trials = 6;
 
-    global place_region
     ranked_slots = zeros(PLACE_CELLS, 1);
 
     % food is retrieved from store
     neutral_input = sum(PLACE_SLOTS);
     %injection_current = rand(1,14); % <-- used for forgetting
     for p = 1:PLACE_CELLS
-        injection_current = neutral_input/max(neutral_input) + rand(1,14)/2; % <-- used for the eleminating input model
+        injection_current = neutral_input/(15-p) +(rand(1,14) - 0.5 ); % <-- used for the eleminating input model
 
-        cycle_net(injection_current, [0 0], cycles, 0);
+        final_place_activity = cycle_net(injection_current, [0 0], cycles*3, 0);
 
-        avg = mean(place_region(3:cycles,:));
+        avg = final_place_activity;
         [slot_signal ranked_slots(p)] = find_place(avg); % <-- used for the eleminating input model
         neutral_input = neutral_input - slot_signal; % <-- used for the eleminating input model
         % cycle_net(slot_signal, [0 0], cycles, -1); % <-- used forgetting
@@ -41,10 +40,10 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     
     first_checked = avg_checks(1)<8;
 
-    figure;
-    title('Place dist');
-    plot(avg_checks);
-    drawnow;
+%     figure;
+%     title('Place dist');
+%     plot(avg_checks);
+%     drawnow;
 end
 
 function [slot_signal slot] = find_place(place_response)
@@ -62,7 +61,7 @@ function [slot_signal slot] = find_place(place_response)
     slot_signal = FOODED_SLOTS(slot, :);
     a = -2*ones(1,14);
     fs =  FOODED_SLOTS(slot,:);
-    FOODED_SLOTS(slot,:) = -35*ones(1,14);
+    FOODED_SLOTS(slot,:) = FOODED_SLOTS(slot,:)*0 - 35;
 end
 
 function side_pref = side_pref_calc (ranked_slots)
@@ -70,9 +69,7 @@ function side_pref = side_pref_calc (ranked_slots)
     
     first_side = zeros(PLACE_CELLS,1);
     first_side(ranked_slots<8) = 1;
-    
-    first_side(1) = 3 * first_side(1);
  
-    side_pref = sum(first_side(1:8))/4;
+    side_pref = sum(first_side(1:8));
 
 end

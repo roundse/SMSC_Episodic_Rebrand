@@ -196,85 +196,121 @@ save(filename);
 is_learning = false;
 place_order = randperm(PLACE_CELLS);
 
-for l=1:PLACE_CELLS
-    i = place_order(l);
+for k=1:1
+    place_order = randperm(PLACE_CELLS);
 
-    food_stim = place(i,:);
-    place_stim = PLACE_SLOTS(i,:);
-
-    for j = 3:cycles
-        hpc_out = hpc(j-1,:);
-        place_out = place_region(j-1,:);
-        food_out = food(j-1, :);
-
-        % sets value
+    for j = 1:PLACE_CELLS
+        i = place_order(j);
+  
         if place(i,:) == WORM
             value = VALUE(worm);
         else
             value = VALUE(peanut);
         end
-
-        cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
-        cycle_place(place_out, w_hpc_to_place, hpc_out, value);
-
-        cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-        cycle_food(food_out, w_hpc_to_food, hpc_out, value);
-
-        cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
-        cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-
-        cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
-
-        hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-        place_region(j,:) = cycle_place({place_region(j-1,:), ...
-            hpc(j,:)}, is_learning);
-        food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
-    end
-    hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
-end
-
-% agent thinks about stored food
-collect_size = 10;
-for k=1:collect_size
-    place_order = randperm(PLACE_CELLS);
-    
-    for j=1:PLACE_CELLS
-        i = place_order(j);
         
-        food_stim = place(i,:);
-        place_stim = PLACE_SLOTS(i,:);
-
-        for j = 3:cycles
-            hpc_out = hpc(j-1,:);
-            place_out = place_region(j-1,:);
-            food_out = food(j-1, :);
-
-            % sets value
-            if place(i,:) == WORM
-                value = VALUE(worm);
-            else
-                value = VALUE(peanut);
-            end
-
-            cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
-            cycle_place(place_out, w_hpc_to_place, hpc_out, value);
-
-            cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-            cycle_food(food_out, w_hpc_to_food, hpc_out, value);
-
-            cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
-            cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-
-            cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
-
-            hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-            place_region(j,:) = cycle_place({place_region(j-1,:), ...
-                hpc(j,:)}, is_learning);
-            food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
-        end
-        hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        
+    	hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
     end
 end
+
+for k=1:10
+    place_order = randperm(PLACE_CELLS);
+
+    for j = 1:PLACE_CELLS
+        i = place_order(j);
+  
+        if place(i,:) == WORM
+            value = VALUE(worm);
+        else
+            value = VALUE(peanut);
+        end
+        
+        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        
+    	hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+    end
+end
+
+% for l=1:PLACE_CELLS
+%     i = place_order(l);
+% 
+%     food_stim = place(i,:);
+%     place_stim = PLACE_SLOTS(i,:);
+% 
+%     for j = 3:cycles
+%         hpc_out = hpc(j-1,:);
+%         place_out = place_region(j-1,:);
+%         food_out = food(j-1, :);
+% 
+%         % sets value
+%         if place(i,:) == WORM
+%             value = VALUE(worm);
+%         else
+%             value = VALUE(peanut);
+%         end
+% 
+%         cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
+%         cycle_place(place_out, w_hpc_to_place, hpc_out, value);
+% 
+%         cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
+%         cycle_food(food_out, w_hpc_to_food, hpc_out, value);
+% 
+%         cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
+%         cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
+% 
+%         cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
+% 
+%         hpc(j,:) = cycle_hpc(hpc_out, is_learning);
+%         place_region(j,:) = cycle_place({place_region(j-1,:), ...
+%             hpc(j,:)}, is_learning);
+%         food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
+%     end
+%     hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+% end
+% 
+% % agent thinks about stored food
+% collect_size = 10;
+% for k=1:collect_size
+%     place_order = randperm(PLACE_CELLS);
+%     
+%     for j=1:PLACE_CELLS
+%         i = place_order(j);
+%         
+%         food_stim = place(i,:);
+%         place_stim = PLACE_SLOTS(i,:);
+% 
+%         for j = 3:cycles
+%             hpc_out = hpc(j-1,:);
+%             place_out = place_region(j-1,:);
+%             food_out = food(j-1, :);
+% 
+%             % sets value
+%             if place(i,:) == WORM
+%                 value = VALUE(worm);
+%             else
+%                 value = VALUE(peanut);
+%             end
+% 
+%             cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
+%             cycle_place(place_out, w_hpc_to_place, hpc_out, value);
+% 
+%             cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
+%             cycle_food(food_out, w_hpc_to_food, hpc_out, value);
+% 
+%             cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
+%             cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
+% 
+%             cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
+% 
+%             hpc(j,:) = cycle_hpc(hpc_out, is_learning);
+%             place_region(j,:) = cycle_place({place_region(j-1,:), ...
+%                 hpc(j,:)}, is_learning);
+%             food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
+%         end
+%         hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+%     end
+% end
 
 [checked_places side_pref avg_checks first_checked] = place_slot_check; % mean_spot_check();
 
