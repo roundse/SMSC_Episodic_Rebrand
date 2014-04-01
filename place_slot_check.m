@@ -24,7 +24,7 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     for p = 1:PLACE_CELLS
         injection_current = neutral_input/(15-p) +(rand(1,14) - 0.5 ); % <-- used for the eleminating input model
 
-        final_place_activity = cycle_net(injection_current, [0 0], cycles*3, 0);
+        final_place_activity = cycle_net(injection_current, [0 0], cycles, 0);
 
         avg = final_place_activity;
         [slot_signal ranked_slots(p)] = find_place(avg); % <-- used for the eleminating input model
@@ -70,6 +70,6 @@ function side_pref = side_pref_calc (ranked_slots)
     first_side = zeros(PLACE_CELLS,1);
     first_side(ranked_slots<8) = 1;
  
-    side_pref = sum(first_side(1:8));
+    side_pref = sum(first_side(1:6));
 
 end

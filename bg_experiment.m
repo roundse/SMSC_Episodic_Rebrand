@@ -95,14 +95,18 @@ PLACE_SLOTS = zeros(PLACE_CELLS);
 
 PLACE_STR = 0.4;
 
+side1 = 1*(rand(1, PLACE_CELLS) < PLACE_STR/2);
+
+side2 = 1*(rand(1, PLACE_CELLS) < PLACE_STR/2);
+
 % Food is pre-stored.
 for i = 1:PLACE_CELLS
     if i <= 7
         place(:,i) = WORM;
-        PLACE_SLOTS(i,:) = 1*(rand(1, PLACE_CELLS) < PLACE_STR);
+        PLACE_SLOTS(i,:) = 1*(rand(1, PLACE_CELLS) < PLACE_STR) + side1 - side2;
     else
         place(:,i) = PEANUT;
-        PLACE_SLOTS(i,:) = 1*(rand(1, PLACE_CELLS) < PLACE_STR);
+        PLACE_SLOTS(i,:) = 1*(rand(1, PLACE_CELLS) < PLACE_STR) - side1 + side2;
     end
 end
 

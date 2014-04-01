@@ -15,7 +15,7 @@ gain_max = 0.7;
 
 runs = 10;
 cycles = 14;
-values = [5 2; 0.5 2;0.1 2]; %[6 1.5; 0 2; -1 2];
+values = [5 2; 0.5 2; 0 2]; %[6 1.5; 0 2; -1 2];
 
 gain_oja = 0.7;
 learning_rate = 0.4;
@@ -34,10 +34,10 @@ place_stats = zeros(runs, 2);
 filename = horzcat(DIR, '\trial_data', '.mat');
 
 is_disp_weights = false;
-v = 1;
 [num_values temp] = size(values);
 % profile on
 for e=1:10
+    v = 1;
     while v <= num_values
         VALUE = values(v,:); %worm, peanut
 
@@ -69,23 +69,38 @@ for e=1:10
     
     all_trials{e} = trials;
     
+    ffc = 'fig_first_check';
+    fsp = 'fig_side_prefs';
+    
     figure;
     title('First Check %');
     bar(avg_first_checks);
     drawnow;
+    % strrep(ffc, '%d', num2str(e))
+    saveas(gcf, horzcat(DIR, '\', ffc, '_', num2str(e)), 'fig');
     
     temp = zeros(6,1);
     
     for k=1:3
         l = 2*k;
         temp(l-1) = avg_side_preference(k);
-        temp(l) = 7- avg_side_preference(k);
+        temp(l) = 6- avg_side_preference(k);
     end
+
+    avg_side_preference = temp;
 
     figure;
     title('Side Preferences %');
-    bar(temp);
+    for i = 1:3
+        k = i*2;
+        bar(k-1, avg_side_preference(k-1),'b');
+        hold on
+        bar(k, avg_side_preference(k),'r');
+        hold on
+    end
     drawnow;
+    
+    saveas(gcf, horzcat(DIR, '\', fsp, '_', num2str(e)), 'fig');
 end
 
 save(filename,'trials', 'avg_first_checks', 'avg_side_preference');
