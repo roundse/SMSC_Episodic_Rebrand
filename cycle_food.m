@@ -1,4 +1,4 @@
-function returnable = cycle_food(food_in, input_weights, input, value)
+function returnable = cycle_food_hpc(food_in, input_weights, input, value)
     global w_food_to_food;
     global VAL;
 

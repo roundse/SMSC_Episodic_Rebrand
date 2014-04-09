@@ -36,18 +36,18 @@ for j = 2:cycles
     place_out = place_region(j-1,:);
     food_out = food(j-1, :);
 
-    cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
-    cycle_place(place_out, w_hpc_to_place, hpc_out, value);
+    cycle_place_hpc(place_out, eye(PLACE_CELLS), place_stim, value);
+    cycle_place_hpc(place_out, w_hpc_to_place, hpc_out, value);
     % ADDED 4/8
-    cycle_place(place_out, w_food_to_place, food_out, value); % maybe have value?
-    cycle_place(place_out, w_pfc_to_place, pfc_out, value);
+    %cycle_place_food(place_out, w_food_to_place, food_out, value); % maybe have value?
+    cycle_place_pfc(place_out, w_pfc_to_place, pfc_out, value);
     
 
-    cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-    cycle_food(food_out, w_hpc_to_food, hpc_out, value);
+    cycle_food_hpc(food_out, eye(FOOD_CELLS), food_stim, value);
+    cycle_food_hpc(food_out, w_hpc_to_food, hpc_out, value);
     % ADDED 4/8
-    cycle_food(food_out, w_place_to_food, place_out, value); % maybe add value?
-    cycle_food(food_out, w_pfc_to_food, pfc_out, value);
+    cycle_food_place(food_out, w_place_to_food, place_out, value); % maybe add value?
+    cycle_food_pfc(food_out, w_pfc_to_food, pfc_out, value);
 
     cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
     cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
