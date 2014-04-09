@@ -18,9 +18,9 @@ if nargin < 3
     for i = 1:(queue_pos-1)
         temp_input = total_inputs + hpc_in_queue{i} * hpc_weight_queue{i};
         
-        if input_weights
+        %if input_weights
            %w_hpc_to_hpc = oja(hpc_in, temp_input, w_hpc_to_hpc, HVAL); 
-        end
+        %end
         total_inputs = total_inputs + temp_input;
     end
     

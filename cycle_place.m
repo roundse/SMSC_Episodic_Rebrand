@@ -33,7 +33,7 @@ if nargin < 3
     
     if input_weights
     [w_hpc_to_place w_place_to_hpc] = recurrent_oja(place_out, place_in, ...
-        hpc_in, w_hpc_to_place, w_place_to_hpc, PVAL);
+        hpc_in, w_hpc_to_place, w_place_to_hpc, PVAL, 1);
     end
     
     place_in_queue = {};

@@ -1,14 +1,23 @@
 function [wy wx] = recurrent_oja(output, old_output, input, ...
-                                    output_weights, input_weights, value)
+                                    output_weights, input_weights, value, ...
+                                    b_hpc)
 
 if nargin < 6
     value = 1;
 end
 
-global learning_rate;
+global hpc_learning_rate;
+global pfc_learning_rate;
+
 alpha = 5;
 alpha = sqrt(alpha);
-eta = learning_rate;
+
+switch b_hpc
+    case 1
+        eta = hpc_learning_rate;
+    case 2
+        eta = pfc_learning_rate;
+end
 
 x = input;
 y_old = old_output;

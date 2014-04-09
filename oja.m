@@ -1,6 +1,13 @@
-function wx = oja (output, input, weights, val)
-    global learning_rate;
-    eta = learning_rate;
+function wx = oja (output, input, weights, val, b_hpc)
+    global hpc_learning_rate;
+    global pfc_learning_rate;
+    
+    switch b_hpc
+        case 1
+            eta = hpc_learning_rate;
+        case 2
+            eta = pfc_learning_rate;
+    end
 
     x = input;
     y = output;

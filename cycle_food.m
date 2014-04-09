@@ -32,7 +32,8 @@ function returnable = cycle_food(food_in, input_weights, input, value)
 
         if input_weights
                 [w_hpc_to_food w_food_to_hpc] = recurrent_oja(food_out, food_in, hpc_in, ...
-                    w_hpc_to_food, w_food_to_hpc, VAL);
+                    w_hpc_to_food, w_food_to_hpc, VAL, 1);
+                
         end
 
         food_in_queue = {};

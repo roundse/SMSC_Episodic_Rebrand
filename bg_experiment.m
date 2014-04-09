@@ -1,10 +1,15 @@
 function [avg_checks side_pref checked_places first_checked] = bg_experiment(cycles, ... 
-    learning_rate, gain_oja, is_disp_weights)
+    hpc_learning_rate, pfc_learning_rate, gain_oja, is_disp_weights)
 
 global INP_STR;
 global GAIN;
 GAIN = 5;
 
+
+%%% NEW (4/8/14) %%%%%
+global PFC_SIZE;
+PFC_SIZE = 250;
+%%%%%%%%%%%%%%%%%%%%%%%
 
 global HPC_SIZE;
 HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
@@ -39,6 +44,21 @@ global w_hpc_to_food;
 global w_hpc_to_place;
 global w_hpc_to_hpc;
 
+%%%% NEW WEIGHTS (4/8/14) %%%%
+global w_food_to_place;
+global w_place_to_food;
+
+global w_pfc_to_hpc;
+
+global w_food_to_pfc;
+global w_place_to_pfc;
+global w_pfc_to_food;
+global w_pfc_to_place;
+
+global pfc_in_queue;
+global pfc_weight_queue;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 global w_food_to_food;
 global w_food_in;
 
@@ -61,6 +81,9 @@ place_weight_queue = {};
 hpc_in_queue = {};
 hpc_weight_queue = {};
 
+pfc_in_queue = {};
+pfc_weight_queue = {};
+
 food_in_queue = {};
 food_weight_queue = {};
 
@@ -72,6 +95,21 @@ w_hpc_to_food = - w_food_to_hpc';
 w_place_to_hpc = 0.5 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
 w_hpc_to_place =  - w_place_to_hpc';
 
+%%%% ADDING IN THE NEW WEIGHTS (4/8/14)
+w_food_to_place = 0.25 .* ones(FOOD_CELLS, PLACE_CELLS);
+w_place_to_food = w_food_to_place';
+w_food_to_pfc = 0.25 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_pfc_to_food = w_food_to_pfc';
+w_place_to_pfc = 0.25 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_pfc_to_place = w_place_to_pfc';
+w_pfc_to_hpc = -1 .* ones(PFC_SIZE, HPC_SIZE);
+
+global w_pfc_to_place_init;
+global w_place_to_pfc_init;
+w_pfc_to_place_init = w_pfc_to_place;
+w_place_to_pfc_init = w_place_to_pfc;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 global w_hpc_to_place_init;
 global w_place_to_hpc_init;
@@ -80,10 +118,12 @@ w_hpc_to_hpc = -1 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 w_hpc_to_place_init = w_hpc_to_place;
 w_place_to_hpc_init = w_place_to_hpc;
 
+global pfc;
 global hpc;
 global place_region;
 global food;
 
+pfc = zeros(cycles, PFC_SIZE);
 hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
@@ -321,8 +361,9 @@ end
 filename = horzcat(TRIAL_DIR, 'after final trial ', '_variables');
 save(filename);
 
-varlist = {'hpc','place_region','food', 'place_in_queue', ...
+varlist = {'hpc','place_region','food', 'pfc', 'place_in_queue', ...
     'place_weight_queue', 'hpc_in_queue', 'hpc_weight_queue', ...
-    'food_in_queue', 'food_weight_queue'};
+    'food_in_queue', 'food_weight_queue', 'pfc_in_queue', ...
+    'pfc_weight_queue'};
 clear(varlist{:})
 end
