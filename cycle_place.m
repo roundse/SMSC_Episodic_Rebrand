@@ -1,4 +1,4 @@
-function returnable = cycle_place(place_in, input_weights, input, value)
+function returnable = cycle_place_hpc(place_in, input_weights, input, value)
 global w_place_to_place;
 global PVAL;
 
