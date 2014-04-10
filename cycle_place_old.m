@@ -1,4 +1,4 @@
-function returnable = cycle_food_place(place_in, input_weights, input, value)
+function returnable = cycle_place_old(place_in, input_weights, input, value)
 global w_place_to_place;
 global PVAL;
 
@@ -9,8 +9,8 @@ global PLACE_CELLS;
 PLACE_CELLS = 14;
 
 % recurrency stuff
-global w_food_to_place;
-global w_place_to_food;
+global w_place_to_hpc;
+global w_hpc_to_place;
 
 place_eye = eye(PLACE_CELLS);
 w_place_to_place = zeros(PLACE_CELLS);
@@ -23,7 +23,8 @@ if nargin < 3
     place_in = place_in{1};
     
     for i = 1:(queue_pos-1)
-        total_inputs = total_inputs + place_in_queue{i} * place_weight_queue{i};
+        total_inputs = total_inputs + place_in_queue{i} * ...
+            place_weight_queue{i};
     end
     
     place_out = activity(place_in, place_eye, total_inputs, ...
@@ -32,8 +33,8 @@ if nargin < 3
     returnable = place_out;
     
     if input_weights
-    [w_food_to_place w_place_to_food] = recurrent_oja(place_out, place_in, ...
-        hpc_in, w_food_to_place, w_place_to_food, PVAL, 1);
+    [w_hpc_to_place w_place_to_hpc] = recurrent_oja(place_out, place_in, ...
+        hpc_in, w_hpc_to_place, w_place_to_hpc, PVAL, 1);
     end
     
     place_in_queue = {};
