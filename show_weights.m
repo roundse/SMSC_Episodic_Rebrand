@@ -5,6 +5,10 @@ global w_hpc_to_place;
 global w_food_to_hpc;
 global w_hpc_to_food;
 global w_hpc_to_hpc;
+
+global w_food_to_pfc w_pfc_to_food;
+global w_place_to_pfc w_pfc_to_place;
+
 global hpc;
 global place_region;
 global food;
@@ -12,6 +16,7 @@ global cycles
 global learning_rate;
 global TRIAL_DIR;
 global PLACE_SLOTS;
+
 
 filename = horzcat(TRIAL_DIR, section, '_variables');
 save(filename);
@@ -64,18 +69,43 @@ if is_disp_weights
     drawnow;
 
     figure;
-    hist(hpc);
-    title(horzcat(section, ' HPC cumulative inputs'));
+    subplot(1, 2, 1);
+    wx_fpfc_temp = w_food_to_pfc(w_food_to_pfc ~= 0);
+    hist(wx_fpfc_temp);
+    title(horzcat(section, ' Food to PFC'));
+    subplot(1,2,2);
+    imagesc(w_food_to_pfc);
+    colorbar();
     drawnow;
 
     figure;
-    hist(place_region);
-    title(horzcat(section, ' Place cumulative inputs'));
+    subplot(1,2,1);
+    wx_pfcf_temp = w_pfc_to_food(w_pfc_to_food ~= 0);
+    hist(wx_pfcf_temp);
+    title(horzcat(section, ' PFC to Food'));
+    subplot(1,2,2);
+    imagesc(w_pfc_to_food);
+    colorbar();
+    drawnow;
+    
+    figure;
+    subplot(1, 2, 1);
+    wx_ppfc_temp = w_place_to_pfc(w_place_to_pfc ~= 0);
+    hist(wx_ppfc_temp);
+    title(horzcat(section, ' Place to PFC'));
+    subplot(1,2,2);
+    imagesc(w_place_to_pfc);
+    colorbar();
     drawnow;
 
     figure;
-    hist(food);
-    title(horzcat(section, ' Food cumulative inputs'));
+    subplot(1,2,1);
+    wx_pfcp_temp = w_pfc_to_place(w_pfc_to_place ~= 0);
+    hist(wx_pfcp_temp);
+    title(horzcat(section, ' PFC to Place'));
+    subplot(1,2,2);
+    imagesc(w_pfc_to_place);
+    colorbar();
     drawnow;
 
     global hpc_responses_to_place;

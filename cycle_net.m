@@ -15,6 +15,7 @@ global w_hpc_to_food;
 global w_place_to_hpc;
 global w_food_to_hpc;
 
+global w_food_to_place;
 global w_place_to_food;
 global w_pfc_to_food;
 global w_food_to_pfc;
@@ -35,19 +36,17 @@ for j = 2:cycles
     place_out = place_region(j-1,:);
     food_out = food(j-1, :);
 
-    cycle_place(place_out, eye(PLACE_CELLS), eye(PLACE_CELLS), ...
-        place_stim, value);
-    %cycle_place(place_out, w_hpc_to_place, hpc_out, value);
+    cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
+    cycle_place(place_out, w_hpc_to_place, hpc_out);
     % ADDED 4/8
-    cycle_place(place_out, w_hpc_to_place, w_pfc_to_place, food_out, ...
-        value); % maybe have value?
+    cycle_place(place_out, w_pfc_to_place, pfc_out, value);
+    
 
-    cycle_food(food_out, eye(FOOD_CELLS), eye(FOOD_CELLS), eye(FOOD_CELLS), ...
-        food_stim, value);
-    %cycle_food_hpc(food_out, w_hpc_to_food, hpc_out, value);
+    cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
+    cycle_food(food_out, w_hpc_to_food, hpc_out, value);
     % ADDED 4/8
-    cycle_food(food_out, w_hpc_to_food, w_pfc_to_food, w_place_to_food, ...
-        place_out, value); % maybe add value?
+    cycle_food(food_out, w_place_to_food, place_out, value); % maybe add value?
+    cycle_food(food_out, w_pfc_to_food, pfc_out, value);
 
     cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
     cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
@@ -63,10 +62,8 @@ for j = 2:cycles
     % ADDED 4/8
     pfc(j,:) = cycle_pfc(pfc_out, is_learning);
     
-    
-    % WHAT TO DO WITH THESE?
     hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-    place_region(j,:) = cycle_place_old({place_region(j-1,:), hpc(j,:), pfc(j,:)}, is_learning);
+    place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:)}, is_learning);
     food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
 end
 

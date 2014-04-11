@@ -12,10 +12,9 @@ global pfc_learning_rate;
 alpha = 5;
 alpha = sqrt(alpha);
 
-switch b_hpc
-    case 1
+if b_hpc == true
         eta = hpc_learning_rate;
-    case 2
+else
         eta = pfc_learning_rate;
 end
 
@@ -37,6 +36,9 @@ for i = 1:I
             wx_cur = wx(j,i);
             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
             wx(j,i) = wx_cur + delta_wx;
+            if b_hpc == true
+               wx(j,i) = wx(j,i) * (1 - (1/10));
+            end
         end
     end
 end
@@ -49,11 +51,16 @@ for i = 1:I
             wy_cur = wy(j,i);
             delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
             wy(j,i) = wy_cur + delta_wy;
+            if b_hpc == true
+               wy(j,i) = wy(j,i) * (1 - (1/10));
+            end
         end
     end
 end
 
 end
+
+
 
 % function [wy wx] = recurrent_oja(output, old_output, input, ...
 %     output_weights, input_weights, value)

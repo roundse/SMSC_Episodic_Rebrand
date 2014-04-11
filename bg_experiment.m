@@ -71,6 +71,7 @@ global place_in_queue;
 global place_weight_queue;
 
 global hpc_responses_to_place;
+global pfc_responses_to_place;
 
 global is_learning;
 is_learning = 1;
@@ -128,6 +129,7 @@ hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
 hpc_responses_to_place = zeros(PLACE_CELLS, HPC_SIZE);
+pfc_responses_to_place = zeros(PLACE_CELLS, HPC_SIZE);
 
 global PLACE_SLOTS;
 
@@ -255,6 +257,8 @@ for k=1:1
         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
         
     	hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+        pfc_responses_to_place(i,:) = mean(pfc(3:cycles, :));
+
     end
 end
 
@@ -273,8 +277,22 @@ for k=1:10
         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
         
     	hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+        pfc_responses_to_place(i,:) = mean(pfc(3:cycles, :));
     end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PRETRAINING: Agent stores both foods. Consolidates 124 hours and is allowed to
+%           retrieve the foods. Learns worms decay.
+%         Then agent stores both foods. Consolidates 4 hours and then is
+%         allowed to retrieve the foods. Learns worms are still good.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
+%           stores the second food, and consolidates the leftover time.
+%           Then gets to recover its caches.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % for l=1:PLACE_CELLS
 %     i = place_order(l);
