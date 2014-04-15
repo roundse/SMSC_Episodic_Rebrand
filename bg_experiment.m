@@ -224,7 +224,7 @@ for i=1:2
         p_indices = randperm(PLACE_CELLS/2);
         place_order = s_spots(p_indices);
         
-        for j = 1:PLACE_CELLS
+        for j = 1:14
             i = place_order(j);
 
             if place(i,:) == WORM
@@ -339,39 +339,78 @@ disp(['PFC Task 3b: ', num2str(activity2)]);
 %         Then agent stores both foods. Consolidates 4 hours and then is
 %         allowed to retrieve the foods. Learns worms are still good.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Cache food 1.
-% Cache food 2.
 
-% Consolidate x hours.
-% Retrieve.
+% given food with value
+VALUE = stored_val;
+activity1 = 0;
+activity2 = 0;
+for k=1:1
+    place_order = randperm(PLACE_CELLS);
 
-% pl = zeros(1,14);
-% % Four pairs of trials
-% for p = 1:4
-%     f = rand;
-%     t = rand;
-%     if f < 0.5
-%         food1 = WORM;
-%         food2 = PEANUT;
-%         PLACE_CELLS1 = 7;
-%         PLACE_CELLS2 = 14;
-%     else
-%         food1 = PEANUT;
-%         food2 = WORM;
-%         PLACE_CELLS1 = 14;
-%         PLACE_CELLS2 = 7;
-%     end
-%     
-%     if t < 0.5
-%         time1 = 4;
-%         time2 = 124;
-%     else
-%         time1 = 124;
-%         time2 = 4;
-%     end
-%     
-%     
-%     for j = 1:PLACE_CELLS1
+    for j = 1:14
+        i = place_order(j);
+  
+        if place(i,:) == WORM
+            value = VALUE(worm);
+        else
+            value = VALUE(peanut);
+        end
+        
+        [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+    end
+    m1(k) = mean(sum1);
+    m2(k) = mean(sum2);
+end
+activity1 = mean(m1);
+activity2 = mean(m2);
+disp(['HPC - Task 2a: ', num2str(activity1)]);
+disp(['PFC - Task 2a: ', num2str(activity2)]);
+
+% given food with value
+for k=1:30
+    place_order = randperm(PLACE_CELLS);
+
+    for j = 1:PLACE_CELLS
+        i = place_order(j);
+  
+        if place(i,:) == WORM
+            value = VALUE(worm);
+        else
+            value = VALUE(peanut);
+        end
+        
+        [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+    end
+    m1(k) = mean(sum1);
+    m2(k) = mean(sum2);
+end
+activity1 = mean(m1);
+activity2 = mean(m2);
+disp(['HPC Task 2b: ', num2str(activity1)]);
+disp(['PFC Task 2b: ', num2str(activity2)]);
+
+show_weights('Cached with value ', is_disp_weights);
+
+global TRIAL_DIR;
+filename = horzcat(TRIAL_DIR, 'post learning', '_variables');
+save(filename);
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
+% %           stores the second food, and consolidates the leftover time.
+% %           Then gets to recover its caches.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% % given food with value
+% VALUE = stored_val;
+% activity1 = 0;
+% activity2 = 0;
+% for k=1:1
+%     place_order = randperm(PLACE_CELLS);
+% 
+%     for j = 1:PLACE_CELLS
+%         i = place_order(j);
 %   
 %         if place(i,:) == WORM
 %             value = VALUE(worm);
@@ -379,98 +418,44 @@ disp(['PFC Task 3b: ', num2str(activity2)]);
 %             value = VALUE(peanut);
 %         end
 %         
-%     [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+%         [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
 %     end
-%     
+%     m1(k) = mean(sum1);
+%     m2(k) = mean(sum2);
 % end
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
-%           stores the second food, and consolidates the leftover time.
-%           Then gets to recover its caches.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% for l=1:PLACE_CELLS
-%     i = place_order(l);
+% activity1 = mean(m1);
+% activity2 = mean(m2);
+% disp(['HPC - Task 2a: ', num2str(activity1)]);
+% disp(['PFC - Task 2a: ', num2str(activity2)]);
 % 
-%     food_stim = place(i,:);
-%     place_stim = PLACE_SLOTS(i,:);
+% % given food with value
+% for k=1:30
+%     place_order = randperm(PLACE_CELLS);
 % 
-%     for j = 3:cycles
-%         hpc_out = hpc(j-1,:);
-%         place_out = place_region(j-1,:);
-%         food_out = food(j-1, :);
-% 
-%         % sets value
+%     for j = 1:PLACE_CELLS
+%         i = place_order(j);
+%   
 %         if place(i,:) == WORM
 %             value = VALUE(worm);
 %         else
 %             value = VALUE(peanut);
 %         end
-% 
-%         cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
-%         cycle_place(place_out, w_hpc_to_place, hpc_out, value);
-% 
-%         cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-%         cycle_food(food_out, w_hpc_to_food, hpc_out, value);
-% 
-%         cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
-%         cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-% 
-%         cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
-% 
-%         hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-%         place_region(j,:) = cycle_place({place_region(j-1,:), ...
-%             hpc(j,:)}, is_learning);
-%         food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
-%     end
-%     hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
-% end
-% 
-% % agent thinks about stored food
-% collect_size = 10;
-% for k=1:collect_size
-%     place_order = randperm(PLACE_CELLS);
-%     
-%     for j=1:PLACE_CELLS
-%         i = place_order(j);
 %         
-%         food_stim = place(i,:);
-%         place_stim = PLACE_SLOTS(i,:);
-% 
-%         for j = 3:cycles
-%             hpc_out = hpc(j-1,:);
-%             place_out = place_region(j-1,:);
-%             food_out = food(j-1, :);
-% 
-%             % sets value
-%             if place(i,:) == WORM
-%                 value = VALUE(worm);
-%             else
-%                 value = VALUE(peanut);
-%             end
-% 
-%             cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
-%             cycle_place(place_out, w_hpc_to_place, hpc_out, value);
-% 
-%             cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-%             cycle_food(food_out, w_hpc_to_food, hpc_out, value);
-% 
-%             cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
-%             cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-% 
-%             cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
-% 
-%             hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-%             place_region(j,:) = cycle_place({place_region(j-1,:), ...
-%                 hpc(j,:)}, is_learning);
-%             food(j,:) = cycle_food({food(j-1,:), hpc(j,:)}, is_learning);
-%         end
-%         hpc_responses_to_place(i,:) = mean(hpc(3:cycles,:));
+%         [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
 %     end
+%     m1(k) = mean(sum1);
+%     m2(k) = mean(sum2);
 % end
+% activity1 = mean(m1);
+% activity2 = mean(m2);
+% disp(['HPC Task 2b: ', num2str(activity1)]);
+% disp(['PFC Task 2b: ', num2str(activity2)]);
+% 
+% show_weights('Cached with value ', is_disp_weights);
+% 
+% global TRIAL_DIR;
+% filename = horzcat(TRIAL_DIR, 'post learning', '_variables');
+% save(filename);
 
 [checked_places side_pref avg_checks first_checked] = place_slot_check; % mean_spot_check();
 

@@ -20,7 +20,7 @@ gain_max = 0.7;
 runs = 10;
 cycles = 14;
 
-trial_type = 1;
+trial_type = 3;
 
 switch trial_type
     case 1
