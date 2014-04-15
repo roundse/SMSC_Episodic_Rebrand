@@ -49,7 +49,7 @@ place_responses = zeros(runs, 14);
 place_stats = zeros(runs, 2);
 filename = horzcat(DIR, '\trial_data', '.mat');
 
-is_disp_weights = 1;
+is_disp_weights = 0;
 [num_values temp] = size(values);
 % profile on
 for e=1:1

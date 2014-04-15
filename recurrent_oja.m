@@ -36,9 +36,6 @@ for i = 1:I
             wx_cur = wx(j,i);
             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
             wx(j,i) = wx_cur + delta_wx;
-            if b_hpc == true
-               wx(j,i) = wx(j,i) * (1 - (1/10));
-            end
         end
     end
 end
@@ -51,9 +48,6 @@ for i = 1:I
             wy_cur = wy(j,i);
             delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
             wy(j,i) = wy_cur + delta_wy;
-            if b_hpc == true
-               wy(j,i) = wy(j,i) * (1 - (1/10));
-            end
         end
     end
 end

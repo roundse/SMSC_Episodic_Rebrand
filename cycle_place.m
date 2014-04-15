@@ -16,6 +16,8 @@ global w_pfc_to_place w_place_to_pfc;
 
 queue_pos = length(place_in_queue)+1;
 
+global w_food_to_place;
+
 if nargin < 3
     total_inputs = 0;
     hpc_in = place_in{2};
