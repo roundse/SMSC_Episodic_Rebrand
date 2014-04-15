@@ -124,6 +124,9 @@ global hpc;
 global place_region;
 global food;
 
+% duration of consolidation
+global consolidation_length;
+
 pfc = zeros(cycles, PFC_SIZE);
 hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
@@ -211,30 +214,39 @@ show_weights('No value', is_disp_weights);
 VALUE = stored_val;
 activity1 = 0;
 activity2 = 0;
-for k=1:1
-    place_order = randperm(PLACE_CELLS);
 
-    for j = 1:PLACE_CELLS
-        i = place_order(j);
-  
-        if place(i,:) == WORM
-            value = VALUE(worm);
-        else
-            value = VALUE(peanut);
-        end
+side_order = randperm(2);
+for i=1:2
+    s = side_order(i);
+    s_spots = [1+s*7 : 7*(s+1)];
+    
+    for k=1:1
+        p_indices = randperm(PLACE_CELLS/2);
+        place_order = s_spots(p_indices);
         
-        [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        for j = 1:PLACE_CELLS
+            i = place_order(j);
+
+            if place(i,:) == WORM
+                value = VALUE(worm);
+            else
+                value = VALUE(peanut);
+            end
+
+            [fpa sum1(j) sum2(j)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        end
+        m1(k) = mean(sum1);
+        m2(k) = mean(sum2);
     end
-    m1(k) = mean(sum1);
-    m2(k) = mean(sum2);
 end
 activity1 = mean(m1);
 activity2 = mean(m2);
 disp(['HPC - Task 2a: ', num2str(activity1)]);
 disp(['PFC - Task 2a: ', num2str(activity2)]);
 
-% given food with value
-for k=1:30
+% consolidation
+% 
+for k=1:consolidation_length
     place_order = randperm(PLACE_CELLS);
 
     for j = 1:PLACE_CELLS

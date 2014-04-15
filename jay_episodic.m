@@ -10,6 +10,9 @@ global INP_STR;
 global cycles;
 global VALUE;
 
+global consolidation_length;
+consol_times = [62 2]; % 124 hours and 4
+
 INP_STR = 2;
 gain_step = .04;
 gain_max = 0.7;
