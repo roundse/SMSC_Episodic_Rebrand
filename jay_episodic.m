@@ -20,7 +20,7 @@ gain_max = 0.7;
 runs = 10;
 cycles = 14;
 
-trial_type = 3;
+trial_type = 1;
 
 switch trial_type
     case 1
@@ -28,10 +28,10 @@ switch trial_type
         values = [5 2];
     case 2
         disp('trial type: Pilfer');
-        values = [0.5 2];
+        values = [1 2];
     case 3
         disp('trial type: Degrade');
-        values = [0 2];
+        values = [-1.5 2];
 end
 
 %values = [5 2; 0.5 2; 0 2]; %[6 1.5; 0 2; -1 2];
