@@ -330,14 +330,14 @@ place = place';
 % %         Then agent stores both foods. Consolidates 4 hours and then is
 % %         allowed to retrieve the foods. Learns worms are still good.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+
 % given food with value
 % given food with value
-%VALUE = stored_val;
-
-
+% VALUE = stored_val;
+% 
+% 
 % 4 pairs of pretraining trials
-
+% 
 % TO DO:
 % - output what pair of trials it is on
 % - output which trial it is on
@@ -345,94 +345,94 @@ place = place';
 % - change VALUES to reflect what it learns based on consolidation duration
 % - output values along with food and consoliation period to make sure that
 %   the correct value is being taught
-%
-%
+% 
+% 
 % - output activity and weights to see what is happening.
-
+% 
 % WRITE THE TESTING PROTOCOL:
 % - This is exactly the same except that consolidation period happens right
 %   after caching.
 
 
-% for j = 1:4
-%     disp(['Training pair ', num2str(j)]);
-%     f = rand;
-%     if f < 0.5
-%         food1 = worm;
-%         food2 = peanut;
-%     else
-%         food1 = peanut;
-%         food2 = worm;
-%     end
-%     t = rand;
-%     if t < 0.5
-%         time1 = 4;
-%         time2 = 124;
-%     else
-%         time1 = 124;
-%         time2 = 4;
-%     end
-%     
-%     for k = 1:2
-%         if k == 1
-%             if food1 == 1
-%                 disp('First food to be stored is worm');
-%             else
-%                 disp('First food to be stored is peanut');
-%             end
-%             disp(['First consolidation period is: ', num2str(time1)]);
-%         else
-%             if food2 == 1
-%                 disp('Second food to be stored is worm');
-%             else
-%                 disp('Second food to be stored is peanut');
-%             end
-%             disp(['Second consolidation period is: ', num2str(time2)]);
-%         end
-%         
-%         if food1 == worm
-%             value = VALUE(worm);
-%             for i = 1:7
-%                 while place(i,:) == 0
-%                     place(i,:) = WORM;
-%                 end
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-%             end
-%             value = VALUE(peanut);
-%             for i = 8:14
-%                 while place(i,:) == 0
-%                     place(i,:) = PEANUT;
-%                 end
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-%             end
-%         else
-%             value = VALUE(peanut);
-%             for i = 8:14
-%                 while place(i,:) == 0
-%                     place(i,:) = PEANUT;
-%                 end
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-%             end
-%             value = VALUE(worm);
-%             for i = 1:7
-%                 while place(i,:) == 0
-%                     place(i,:) = WORM;
-%                 end
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-%             end
-%         end
-%         
-%         if k == 1
-%             for i = 1:14
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time1, value);
-%             end
-%         else
-%             for i = 1:14
-%                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time2, value);
-%             end
-%         end
-%     end
-% end
+for j = 1:4
+    disp(['Training pair ', num2str(j)]);
+    f = rand;
+    if f < 0.5
+        food1 = worm;
+        food2 = peanut;
+    else
+        food1 = peanut;
+        food2 = worm;
+    end
+    t = rand;
+    if t < 0.5
+        time1 = 4;
+        time2 = 124;
+    else
+        time1 = 124;
+        time2 = 4;
+    end
+    
+    for k = 1:2
+        if k == 1
+            if food1 == 1
+                disp('First food to be stored is worm');
+            else
+                disp('First food to be stored is peanut');
+            end
+            disp(['First consolidation period is: ', num2str(time1)]);
+        else
+            if food2 == 1
+                disp('Second food to be stored is worm');
+            else
+                disp('Second food to be stored is peanut');
+            end
+            disp(['Second consolidation period is: ', num2str(time2)]);
+        end
+        
+        if food1 == worm
+            value = VALUE(worm);
+            for i = 1:7
+                while place(i,:) == 0
+                    place(i,:) = WORM;
+                end
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+            end
+            value = VALUE(peanut);
+            for i = 8:14
+                while place(i,:) == 0
+                    place(i,:) = PEANUT;
+                end
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+            end
+        else
+            value = VALUE(peanut);
+            for i = 8:14
+                while place(i,:) == 0
+                    place(i,:) = PEANUT;
+                end
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+            end
+            value = VALUE(worm);
+            for i = 1:7
+                while place(i,:) == 0
+                    place(i,:) = WORM;
+                end
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+            end
+        end
+        
+        if k == 1
+            for i = 1:14
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time1, value);
+            end
+        else
+            for i = 1:14
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time2, value);
+            end
+        end
+    end
+end
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
