@@ -15,7 +15,7 @@ global w_hpc_to_food;
 global w_place_to_hpc;
 global w_food_to_hpc;
 
-global w_food_to_place;
+
 global w_place_to_food;
 global w_pfc_to_food;
 global w_food_to_pfc;
@@ -66,7 +66,7 @@ for j = 2:cycles
     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
   
     % ADDED 4/8
-    cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+   %cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
     
     % ADDED 4/8
 

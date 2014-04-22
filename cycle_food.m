@@ -21,7 +21,8 @@ if nargin < 3
     food_in = food_in{1};
     
     for i = 1:(queue_pos-1)
-        total_inputs = total_inputs + food_in_queue{i} * food_weight_queue{i};
+        total_inputs = total_inputs + food_in_queue{i} * ...
+            food_weight_queue{i};
     end
     
     food_out = activity(food_in, food_eye, total_inputs, ...
@@ -31,14 +32,14 @@ if nargin < 3
     returnable = food_out;
     if input_weights
         
-        [w_hpc_to_food w_food_to_hpc] = recurrent_oja(food_out, food_in, hpc_in, ...
-            w_hpc_to_food, w_food_to_hpc, VAL, 1);
+        [w_hpc_to_food w_food_to_hpc] = recurrent_oja(food_out, food_in, ...
+            hpc_in, w_hpc_to_food, w_food_to_hpc, VAL, 1);
         
-        [w_pfc_to_food w_food_to_pfc] = recurrent_oja(food_out, food_in, hpc_in, ...
-            w_pfc_to_food, w_food_to_pfc, VAL, 0);
+        [w_pfc_to_food w_food_to_pfc] = recurrent_oja(food_out, food_in, ...
+            hpc_in, w_pfc_to_food, w_food_to_pfc, VAL, 0);
         
-        [w_place_to_food w_food_to_place] = recurrent_oja(food_out, food_in, hpc_in, ...
-            w_place_to_food, w_food_to_place, VAL, 1);
+        [w_place_to_food w_food_to_place] = recurrent_oja(food_out, ...
+            food_in, hpc_in, w_place_to_food, w_food_to_place, VAL, 0);
         
         
     end

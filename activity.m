@@ -12,5 +12,5 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
 
     I = stim_in + intranet_in + noise;
     
-    net_in = persist.*net_in + (1-persist).*(1./(1+exp(-GAIN.*I))); 
+    net_in = persist.*net_in + (1-persist).*(1./(1+exp(-GAIN.*I)));
 end

@@ -9,14 +9,17 @@ end
 global hpc_learning_rate;
 global pfc_learning_rate;
 
-alpha = 5;
-alpha = sqrt(alpha);
 
+alpha = 5;
 if b_hpc == true
         eta = hpc_learning_rate;
+        
 else
         eta = pfc_learning_rate;
+
 end
+
+alpha = sqrt(alpha);
 
 x = input;
 y_old = old_output;
