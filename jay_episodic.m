@@ -22,23 +22,11 @@ cycles = 14;
 
 trial_type = 3;
 
-switch trial_type
-    case 1
-        disp('trial type: Replenish');
-        values = [5 2];
-    case 2
-        disp('trial type: Pilfer');
-        values = [1 2];
-    case 3
-        disp('trial type: Degrade');
-        values = [-1.5 2];
-end
-
 %values = [5 2; 0.5 2; 0 2]; %[6 1.5; 0 2; -1 2];
 
 gain_oja = 0.7;
 hpc_learning_rate = 0.4;
-pfc_learning_rate = 0.2;
+pfc_learning_rate = 0.1;
 
 global pos;
 global DIR;
@@ -51,6 +39,18 @@ pos = 0;
 place_responses = zeros(runs, 14);
 place_stats = zeros(runs, 2);
 filename = horzcat(DIR, '\trial_data', '.mat');
+
+switch trial_type
+    case 1
+        disp('trial type: Replenish');
+        values = [5 2];
+    case 2
+        disp('trial type: Pilfer');
+        values = [1 2];
+    case 3
+        disp('trial type: Degrade');
+        values = [-1.5 2];
+end
 
 is_disp_weights = 0;
 [num_values temp] = size(values);
@@ -66,8 +66,9 @@ for e=1:1
         mkdir(TRIAL_DIR);
         init_val = VALUE;
         
-        [place_responses(i,:) side_pref checked_place first_checked] = bg_experiment(cycles, ...
-            hpc_learning_rate, pfc_learning_rate, gain_oja, is_disp_weights);
+        [place_responses(i,:) side_pref checked_place first_checked] = ...
+            bg_experiment(trial_type, cycles, hpc_learning_rate, ...
+            pfc_learning_rate, gain_oja, is_disp_weights);
         
         place_stats(i,:) = mean(side_pref);
         checked_places{i} = checked_place;

@@ -5,12 +5,16 @@ global hpc;
 global HPC_SIZE;
 global cycles;
 
+global pfc;
+global PFC_SIZE;
 
 % food is retrieved from store
 neutral_input = sum(PLACE_SLOTS);
 
 testing_trials = 6;
 hpc_place_responses = zeros(testing_trials,HPC_SIZE);
+pfc_place_responses = zeros(testing_trials, PFC_SIZE);
+total_place_responses = zeros(testing_trials, HPC_SIZE);
 checked_places = zeros(testing_trials,14);
 side_pref = zeros(testing_trials,2);
 for k = 1:testing_trials
@@ -20,7 +24,10 @@ for k = 1:testing_trials
         cycle_net(bland_input, [0.3 0.3], cycles, 0);
     end
     hpc_place_responses(k,:) = mean(hpc(3:cycles,:));
-    checked_places(k,:) = find_place(hpc_place_responses(k,:));
+    pfc_place_responses(k,:) = mean(pfc(3:cycles,:));
+    total_place_responses(k,:) = (hpc_place_responses(k,:) + ...
+                                    pfc_place_responses(k,:)) / 2;
+    checked_places(k,:) = find_place(total_place_responses(k,:));
     [side_pref(k, 1) side_pref(k, 2)] = side_preference(checked_places(k,:));
 end
 

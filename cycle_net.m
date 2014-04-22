@@ -30,6 +30,10 @@ hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
 
+if nargin < 4
+    value = 1;
+end
+
 sum1 = 0;
 hpc_activity = 0;
 sum2 = 0;
@@ -62,7 +66,7 @@ for j = 2:cycles
     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
   
     % ADDED 4/8
-    %cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+    cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
     
     % ADDED 4/8
 
