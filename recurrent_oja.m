@@ -55,6 +55,8 @@ for i = 1:I
     end
 end
 
+%! wy (as w_place_to_food) here turns into an array (0.5)
+
 end
 
 

@@ -36,7 +36,7 @@ if nargin < 3
         [w_hpc_to_place w_place_to_hpc] = recurrent_oja(place_out, place_in, ...
             hpc_in, w_hpc_to_place, w_place_to_hpc, PVAL, 1);
         [w_pfc_to_place w_place_to_pfc] = recurrent_oja(place_out, place_in, ...
-            hpc_in, w_pfc_to_place, w_place_to_pfc, PVAL, 0);
+            hpc_in, w_pfc_to_place, w_place_to_pfc, PVAL, 0); % !BUG
     end
 
 place_in_queue = {};

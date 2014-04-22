@@ -78,7 +78,7 @@ for j = 2:cycles
     
     hpc(j,:) = cycle_hpc(hpc_out, is_learning);
     place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:), pfc(j,:)}, is_learning);
-    food(j,:) = cycle_food({food(j-1,:), hpc(j,:), pfc(j,:)}, is_learning);
+    food(j,:) = cycle_food({food(j-1,:), hpc(j,:), pfc(j,:)}, is_learning); % !BUG
     
     hpc_activity = mean(hpc(j,:));
     sum1 = sum1 + hpc_activity;

@@ -421,7 +421,7 @@ for j = 1:4
                     place(i,:) = WORM;
                 end
                 %[fpa sum1a(i) sum2a(i)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, default_val(1));
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, default_val(1)); % !BUG
             end
             %value = VALUE(peanut);
             spots = spot_shuffler(8, 14);

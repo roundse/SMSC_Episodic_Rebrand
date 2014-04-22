@@ -26,7 +26,7 @@ trial_type = 3;
 
 gain_oja = 0.7;
 hpc_learning_rate = 0.4;
-pfc_learning_rate = 0.2;
+pfc_learning_rate = 0.002;
 
 global pos;
 global DIR;
