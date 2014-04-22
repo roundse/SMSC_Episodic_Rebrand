@@ -70,7 +70,7 @@ for j = 2:cycles
     
     % ADDED 4/8
 
-    %cycle_pfc(pfc_out, w_food_to_pfc, food_stim, value);
+    cycle_pfc(pfc_out, w_food_to_pfc, food_stim, value);
 
   
     % ADDED 4/8
@@ -78,8 +78,10 @@ for j = 2:cycles
     
     hpc(j,:) = cycle_hpc(hpc_out, is_learning);
     place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:), pfc(j,:)}, is_learning);
+   % place_region(j,:) = cycle_place({place_region(j-1,:), pfc(j,:)}, is_learning);
     food(j,:) = cycle_food({food(j-1,:), hpc(j,:), pfc(j,:)}, is_learning); % !BUG
-    
+   % food(j,:) = cycle_food({food(j-1,:), pfc(j,:)}, is_learning);
+        
     hpc_activity = mean(hpc(j,:));
     sum1 = sum1 + hpc_activity;
     pfc_activity = mean(pfc(j,:));

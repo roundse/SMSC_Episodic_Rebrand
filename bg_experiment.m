@@ -1,6 +1,5 @@
 function [avg_checks side_pref checked_places first_checked] = ...
-    bg_experiment(trial_type, cycles, hpc_learning_rate, ...
-    pfc_learning_rate, gain_oja, is_disp_weights)
+    bg_experiment(trial_type, cycles)
 
 global INP_STR;
 global GAIN;
@@ -100,9 +99,9 @@ w_hpc_to_place =  - w_place_to_hpc';
 %%%% ADDING IN THE NEW WEIGHTS (4/8/14)
 w_food_to_place = 0.5 .* ones(FOOD_CELLS, PLACE_CELLS);
 w_place_to_food = w_food_to_place';
-w_food_to_pfc = 0.5 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_food_to_pfc = 0.2 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_food = w_food_to_pfc';
-w_place_to_pfc = 0.5 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_place_to_pfc = 0.2 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_place = w_place_to_pfc';
 w_pfc_to_hpc = -.05 .* ones(PFC_SIZE, HPC_SIZE);
 
@@ -431,7 +430,7 @@ for j = 1:4
                     place(i,:) = PEANUT;
                 end
                 %[fpa sum1b(i) sum2b(i)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, default_val(1));
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, default_val(2));
             end
             %             sum1(:) = sum1a(:) + sum1b(:);
             %             sum2(:) = sum2a(:) + sum2b(:);

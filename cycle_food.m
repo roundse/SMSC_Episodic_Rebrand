@@ -37,6 +37,7 @@ if nargin < 3
         
         [w_pfc_to_food w_food_to_pfc] = recurrent_oja(food_out, food_in, ...
             hpc_in, w_pfc_to_food, w_food_to_pfc, VAL, 0);
+
         
         [w_place_to_food w_food_to_place] = recurrent_oja(food_out, ...
             food_in, hpc_in, w_place_to_food, w_food_to_place, VAL, 0);

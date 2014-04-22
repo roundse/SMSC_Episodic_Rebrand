@@ -5,17 +5,15 @@ clc;
 
 global hpc_learning_rate;
 global pfc_learning_rate;
-global gain_oja;
 global INP_STR;
+
 global cycles;
 global VALUE;
-
-global consolidation_length;
-consol_times = [62 2]; % 124 hours and 4
+% 
+% global consolidation_length;
+% consol_times = [62 2]; % 124 hours and 4
 
 INP_STR = 2;
-gain_step = .04;
-gain_max = 0.7;
 
 runs = 10;
 cycles = 14;
@@ -23,10 +21,9 @@ cycles = 14;
 trial_type = 3;
 
 %values = [5 2; 0.5 2; 0 2]; %[6 1.5; 0 2; -1 2];
-
-gain_oja = 0.7;
-hpc_learning_rate = 0.4;
-pfc_learning_rate = 0.002;
+% 
+% hpc_learning_rate = 0.4;
+% pfc_learning_rate = 0.005;
 
 global pos;
 global DIR;
@@ -67,8 +64,7 @@ for e=1:1
         init_val = VALUE;
         
         [place_responses(i,:) side_pref checked_place first_checked] = ...
-            bg_experiment(trial_type, cycles, hpc_learning_rate, ...
-            pfc_learning_rate, gain_oja, is_disp_weights);
+            bg_experiment(trial_type, cycles);
         
         place_stats(i,:) = mean(side_pref);
         checked_places{i} = checked_place;

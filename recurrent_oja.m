@@ -6,16 +6,17 @@ if nargin < 6
     value = 1;
 end
 
-global hpc_learning_rate;
-global pfc_learning_rate;
+% global hpc_learning_rate;
+% global pfc_learning_rate;
 
 
-alpha = 5;
+alpha = 0;
+
 if b_hpc == true
-        eta = hpc_learning_rate;
+        eta = .09;
         
 else
-        eta = pfc_learning_rate;
+        eta = 0.04;
 
 end
 
