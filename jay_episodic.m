@@ -64,7 +64,7 @@ for e=1:1
         init_val = VALUE;
         
         [place_responses(i,:) side_pref checked_place first_checked] = ...
-            bg_experiment(trial_type, cycles);
+            bg_experiment(trial_type, cycles, is_disp_weights);
         
         place_stats(i,:) = mean(side_pref);
         checked_places{i} = checked_place;

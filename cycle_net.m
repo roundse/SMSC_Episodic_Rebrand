@@ -1,4 +1,5 @@
-function [final_place_activity sum1 sum2] = cycle_net( place_stim, food_stim, cycles, value)
+function [final_place_activity sum1 sum2] = cycle_net( place_stim, ...
+    food_stim, cycles, value, sum1, sum2, hpc_activity, pfc_activity)
 
 global pfc;
 global hpc;
@@ -30,15 +31,19 @@ hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
 
+global base_inh;
+
 if nargin < 4
     value = 1;
 end
 
-sum1 = 0;
-hpc_activity = 0;
-sum2 = 0;
-pfc_activity = 0;
-
+if nargin < 5
+    sum1 = 0;
+    sum2 = 0;
+    hpc_activity = 0;
+    pfc_activity = 0;
+end
+thresh = -.24;
 for j = 2:cycles
     pfc_out = pfc(j-1,:);
     hpc_out = hpc(j-1,:);
@@ -66,7 +71,7 @@ for j = 2:cycles
     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
   
     % ADDED 4/8
-   %cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+   cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
     
     % ADDED 4/8
 
@@ -88,6 +93,15 @@ for j = 2:cycles
     sum2 = sum2 + pfc_activity;
 %     show_weights('Seeing stuff', 1);
 %     drawnow;
+end
+ratio = hpc_activity/pfc_activity;
+base_prev = base_inh;
+if ratio >= 1
+    base_inh = base_inh + -.001;
+elseif ratio < 1 && base_prev > thresh
+    base_inh = base_inh * 1/ratio;
+elseif base_prev <= thresh
+    base_inh = thresh;
 end
 
 final_place_activity = mean(place_region(6:cycles,:));
