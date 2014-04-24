@@ -102,10 +102,10 @@ for j = 2:cycles
 
     base_prev = base_inh;
     
-    if base_prev > thresh && ratio < 3
-        base_inh = base_prev - (0.000001/ratio);
-    elseif base_prev <= thresh
-        base_inh = thresh;
+    if ratio < 3
+        base_inh = base_prev - (0.000004/ratio);
+%     elseif base_prev <= thresh
+%         base_inh = thresh;
     end
     w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
 end

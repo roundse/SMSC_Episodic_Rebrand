@@ -10,10 +10,10 @@ end
 % global pfc_learning_rate;
 
 
-alpha = .7;
+alpha = 5;
 
 if b_hpc == true
-        eta = .999999;
+        eta = .4;
         
 else
         eta = .0000001;
