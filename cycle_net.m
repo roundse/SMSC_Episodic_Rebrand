@@ -102,8 +102,8 @@ for j = 2:cycles
 
     base_prev = base_inh;
     
-    if ratio < 3
-        base_inh = base_prev - (0.000004/ratio);
+    if ratio >= 0.01 && ratio < 1
+        base_inh = base_prev - (0.00001/ratio);
 %     elseif base_prev <= thresh
 %         base_inh = thresh;
     end

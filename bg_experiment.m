@@ -94,6 +94,7 @@ w_food_to_food = zeros(FOOD_CELLS);
 global base_inh;
 
 base_inh = -.0001;
+base_inh_init = -.0001;
 
 w_food_to_hpc = .5 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
 w_hpc_to_food = w_food_to_hpc';
@@ -372,79 +373,80 @@ end
 default_val = [5 2];
 
 
-worm_4_1 = false;
-peanut_4_1 = false;
-worm_120_1 = false;
-peanut_120_1 = false;
+% worm_4_1 = false;
+% peanut_4_1 = false;
+% worm_120_1 = false;
+% peanut_120_1 = false;
 
 for j = 1:4
-    m1 = 0;
-    m2 = 0;
-    base_inh = -.0001;
-    w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
     
     disp(['Training pair ', num2str(j)]);
     
-    not_found = false;
-    while ( ~not_found )
+    if j == 1
         f = rand;
-        if f < 0.5
-            food1 = worm;
-            food2 = peanut;
-        else
-            food1 = peanut;
-            food2 = worm;
-        end
         t = rand;
-        if t < 0.5
-            time1 = 4;
-            time2 = 120;
+        
+        if f < 0.5
+            fd_order = [worm peanut worm peanut];
         else
-            time1 = 120;
-            time2 = 4;
+            fd_order = [peanut worm peanut worm];
         end
         
-        if food1 == worm && time1 == 4 && ~worm_4_1
-            worm_4_1 = true;
-            not_found = true;
-        elseif food1 == worm && time1 == 120 && ~worm_120_1
-            worm_120_1 = true;
-            not_found = true;
-        elseif food1 == peanut && time1 == 4 && ~peanut_4_1
-            peanut_4_1 = true;
-            not_found = true;
-        elseif food1 == peanut && time1 == 120 && ~peanut_120_1
-            peanut_120_1 = true;
-            not_found = true;
+        if t < 0.5
+            t_order1 = [4   4   120  120];
+            t_order2 = [120 120  4   4];
+        else
+            t_order1 = [120 120  4   4];
+            t_order2 = [4   4    120 120];
         end
     end
     
-    if time1 == 4
+    if t_order1(j) == 4
         value1 = default_val;
         value2 = values;
-    elseif time1 == 120
+    elseif t_order1(j) == 120
         value1 = values;
         value2 = default_val;
     end
     
     for k = 1:2
+        m1 = 0;
+        m2 = 0;
+        base_inh = -.0001;
+        w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+        
         if k == 1
-            if food1 == 1
+            if fd_order(j) == worm
                 disp('First food to be stored is worm');
+                disp(['First value is: ', num2str(value1(1))]);
+                disp(['Second value is: ', num2str(value2(1))]);
+                disp('Second food to be stored is peanut');
+                disp(['First value is: ', num2str(value1(2))]);
+                disp(['Second value is: ', num2str(value2(2))]);
             else
                 disp('First food to be stored is peanut');
-            end
-            disp(['First consolidation period is: ', num2str(time1)]);
-        else
-            if food2 == 1
+                disp(['First value is: ', num2str(value1(2))]);
+                disp(['Second value is: ', num2str(value2(2))]);
                 disp('Second food to be stored is worm');
-            else
-                disp('Second food to be stored is peanut');
+                disp(['First value is: ', num2str(value1(1))]);
+                disp(['Second value is: ', num2str(value2(1))]);
             end
-            disp(['Second consolidation period is: ', num2str(time2)]);
+            
+            disp(['First consolidation period is: ', num2str(t_order1(j)), ...
+                '\n']);
+            disp(['Second consolidation period is: ', num2str(t_order2(j))], ...
+                '\n');
+%         else
+%             if fd_order(j) == peanut
+%                 disp('Second food to be stored is worm');
+%             else
+%                 disp('Second food to be stored is peanut');
+%             end
+%             disp(['Second consolidation period is: ', num2str(t_order2(j))]);
+%             disp(['First value is: ', num2str(value1(2))]);
         end
         
-        if food1 == worm
+        if fd_order(j) == worm
             %value = VALUE(worm);
             spots = spot_shuffler(7);
             for q = 1:7
@@ -453,8 +455,8 @@ for j = 1:4
                     place(i,:) = WORM;
                 end
                 %[fpa hpc_suma(i) pfc_suma(i)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-                    default_val(1)); % !BUG
+                [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                    default_val(1), m1, m2); % !BUG
             end
             %value = VALUE(peanut);
             spots = spot_shuffler(8, 14);
@@ -463,8 +465,8 @@ for j = 1:4
                     place(i,:) = PEANUT;
                 end
                 %[fpa hpc_sumb(i) pfc_sumb(i)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-                    default_val(2));
+                [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                    default_val(2), m1, m2);
             end
             %             hpc_sum(:) = hpc_suma(:) + hpc_sumb(:);
             %             pfc_sum(:) = pfc_suma(:) + pfc_sumb(:);
@@ -478,8 +480,8 @@ for j = 1:4
                     place(i,:) = PEANUT;
                 end
                 %[fpa hpc_suma(j) pfc_suma(j)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-                    default_val(2));
+                [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                    default_val(2), m1, m2);
             end
             %value = VALUE(worm);
             spots = spot_shuffler(7);
@@ -488,8 +490,8 @@ for j = 1:4
                     place(i,:) = WORM;
                 end
                 %[fpa hpc_sumb(j) pfc_sumb(j)] =
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-                    default_val(1));
+                [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                    default_val(1), m1, m2);
             end
             %             hpc_sum(:) = hpc_suma(:) + hpc_sumb(:);
             %             pfc_sum(:) = pfc_suma(:) + pfc_sumb(:);
@@ -514,8 +516,8 @@ for j = 1:4
                 end
                 
                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), ...
-                    place(i,:), cycles*time1, value, m1, m2);
-               %disp(base_inh);
+                    place(i,:), cycles*t_order1(j), value, m1, m2);
+                %disp(base_inh);
             end
             %             disp(base_inh);
             %             pause;
@@ -534,8 +536,8 @@ for j = 1:4
                 end
                 
                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), ...
-                    place(i,:), cycles*time2, value, m1, m2);
-              %disp(base_inh);
+                    place(i,:), cycles*t_order2(j), value, m1, m2);
+                %disp(base_inh);
             end
             m1 = mean(hpc_sum);
             m2 = mean(pfc_sum);
@@ -546,7 +548,178 @@ for j = 1:4
         disp(['HPC Consolidate: ', num2str(activity1)]);
         disp(['PFC Consolidate: ', num2str(activity2)]);
     end
+    
+    %     not_found = false;
+    %     while ( ~not_found )
+    %         f = rand;
+    %         if f < 0.5
+    %             food1 = worm;
+    %             food2 = peanut;
+    %         else
+    %             food1 = peanut;
+    %             food2 = worm;
+    %         end
+    %         t = rand;
+    %         if t < 0.5
+    %             time1 = 4;
+    %             time2 = 120;
+    %         else
+    %             time1 = 120;
+    %             time2 = 4;
+    %         end
+    %
+    %         if food1 == worm && time1 == 4 && ~worm_4_1
+    %             worm_4_1 = true;
+    %             not_found = true;
+    %         elseif food1 == worm && time1 == 120 && ~worm_120_1
+    %             worm_120_1 = true;
+    %             not_found = true;
+    %         elseif food1 == peanut && time1 == 4 && ~peanut_4_1
+    %             peanut_4_1 = true;
+    %             not_found = true;
+    %         elseif food1 == peanut && time1 == 120 && ~peanut_120_1
+    %             peanut_120_1 = true;
+    %             not_found = true;
+    %         end
+    %     end
+    %
+    %     if time1 == 4
+    %         value1 = default_val;
+    %         value2 = values;
+    %     elseif time1 == 120
+    %         value1 = values;
+    %         value2 = default_val;
+    %     end
+    %
+    %     for k = 1:2
+    %         m1 = 0;
+    %         m2 = 0;
+    %         base_inh = -.0001;
+    %         w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+    %         if k == 1
+    %             if food1 == 1
+    %                 disp('First food to be stored is worm');
+    %             else
+    %                 disp('First food to be stored is peanut');
+    %             end
+    %             disp(['First consolidation period is: ', num2str(time1)]);
+    %         else
+    %             if food2 == 1
+    %                 disp('Second food to be stored is worm');
+    %             else
+    %                 disp('Second food to be stored is peanut');
+    %             end
+    %             disp(['Second consolidation period is: ', num2str(time2)]);
+    %         end
+    %
+    %         if food1 == worm
+    %             %value = VALUE(worm);
+    %             spots = spot_shuffler(7);
+    %             for q = 1:7
+    %                 i = spots(q);
+    %                 while place(i,:) == 0
+    %                     place(i,:) = WORM;
+    %                 end
+    %                 %[fpa hpc_suma(i) pfc_suma(i)] =
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+    %                     default_val(1), m1, m2); % !BUG
+    %             end
+    %             %value = VALUE(peanut);
+    %             spots = spot_shuffler(8, 14);
+    %             for i = spots
+    %                 while place(i,:) == 0
+    %                     place(i,:) = PEANUT;
+    %                 end
+    %                 %[fpa hpc_sumb(i) pfc_sumb(i)] =
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+    %                     default_val(2), m1, m2);
+    %             end
+    %             %             hpc_sum(:) = hpc_suma(:) + hpc_sumb(:);
+    %             %             pfc_sum(:) = pfc_suma(:) + pfc_sumb(:);
+    %             %             m1 = mean(hpc_sum);
+    %             %             m2 = mean(pfc_sum);
+    %         else
+    %             %value = VALUE(peanut);
+    %             spots = spot_shuffler(8, 14);
+    %             for i = spots
+    %                 while place(i,:) == 0
+    %                     place(i,:) = PEANUT;
+    %                 end
+    %                 %[fpa hpc_suma(j) pfc_suma(j)] =
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+    %                     default_val(2), m1, m2);
+    %             end
+    %             %value = VALUE(worm);
+    %             spots = spot_shuffler(7);
+    %             for i = spots
+    %                 while place(i,:) == 0
+    %                     place(i,:) = WORM;
+    %                 end
+    %                 %[fpa hpc_sumb(j) pfc_sumb(j)] =
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+    %                     default_val(1), m1, m2);
+    %             end
+    %             %             hpc_sum(:) = hpc_suma(:) + hpc_sumb(:);
+    %             %             pfc_sum(:) = pfc_suma(:) + pfc_sumb(:);
+    %             %             m1 = mean(hpc_sum);
+    %             %             m2 = mean(pfc_sum);
+    %         end
+    %         %         activity1 = mean(m1);
+    %         %         activity2 = mean(m2);
+    %         %         disp(['HPC Storage: ', num2str(activity1)]);
+    %         %         disp(['PFC Storage: ', num2str(activity2)]);
+    %
+    %         if k == 1
+    %             spots = spot_shuffler(14);
+    %             for i = spots
+    %
+    %                 if place(i,:) == WORM
+    %                     value = value1(1);
+    %
+    %                 elseif place(i,:) == PEANUT
+    %                     value = value1(2);
+    %
+    %                 end
+    %
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), ...
+    %                     place(i,:), cycles*time1, value, m1, m2);
+    %                 %disp(base_inh);
+    %             end
+    %             %             disp(base_inh);
+    %             %             pause;
+    %             %             disp(w_pfc_to_hpc);
+    %             %             pause;
+    %             m1 = mean(hpc_sum);
+    %             m2 = mean(pfc_sum);
+    %         else
+    %             spots = spot_shuffler(14);
+    %             for i = spots
+    %
+    %                 if place(i,:) == WORM
+    %                     value = value2(1);
+    %                 elseif place(i,:) == PEANUT
+    %                     value = value2(2);
+    %                 end
+    %
+    %                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), ...
+    %                     place(i,:), cycles*time2, value, m1, m2);
+    %                 %disp(base_inh);
+    %             end
+    %             m1 = mean(hpc_sum);
+    %             m2 = mean(pfc_sum);
+    %         end
+    %         activity1 = mean(m1);
+    %         activity2 = mean(m2);
+    %
+    %         disp(['HPC Consolidate: ', num2str(activity1)]);
+    %         disp(['PFC Consolidate: ', num2str(activity2)]);
+    %     end
 end
+
+save('trained_state', w_pfc_to_hpc, w_hpc_to_food, w_food_to_hpc, ...
+    w_hpc_to_place, w_place_to_hpc, w_pfc_to_food, w_food_to_pfc, ...
+    w_pfc_to_place, w_place_to_pfc, w_food_to_place, w_place_to_food, ...
+    hpc, pfc, food, place_region);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
@@ -557,166 +730,193 @@ end
 %for j = 1:4
 %disp([' pair ', num2str(j)]);
 
-time1 = 120;
-time2 = 4;
-
-%for k = 1:2
-%if k == 1
-m1 = 0;
-m2 = 0;
-
-base_inh = -.0001;
-w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-
-f = rand;
-if f < 0.5
-    food1 = worm;
-    food2 = peanut;
-else
-    food1 = peanut;
-    food2 = worm;
-end
-
-disp('TESTING');
-if food1 == worm
-    disp('Trial type: Degrade --- 124 hr');
-    disp('First food to be stored is worm');
-    disp('Second food to be stored is peanut');
-else
-    disp('Trial type: Degrade --- 4 hr');
-    disp('First food to be stored is peanut');
-    disp('Second food to be stored is worm');
-end
-
-if food1 == worm
-    v = values;
-    %value = VALUE(worm);
+for i = 1:10
+    load('trained_state', w_pfc_to_hpc, w_hpc_to_food, w_food_to_hpc, ...
+        w_hpc_to_place, w_place_to_hpc, w_pfc_to_food, w_food_to_pfc, ...
+        w_pfc_to_place, w_place_to_pfc, w_food_to_place, w_place_to_food, ...
+        hpc, pfc, food, place_region);
     
-    spots = spot_shuffler(7);
+    is_learning = false;
+    
+    time1 = 120;
+    time2 = 4;
+    
+    %for k = 1:2
+    %if k == 1
+    m1 = 0;
+    m2 = 0;
+    
+    base_inh = base_inh_init;
+    w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+    
+    f = rand;
+    if f < 0.5
+        food1 = worm;
+        food2 = peanut;
+    else
+        food1 = peanut;
+        food2 = worm;
+    end
+    
+    disp('TESTING');
+    if food1 == worm
+        disp('Trial type: Degrade --- 124 hr');
+        disp('First food to be stored is worm');
+        disp('Second food to be stored is peanut');
+    else
+        disp('Trial type: Degrade --- 4 hr');
+        disp('First food to be stored is peanut');
+        disp('Second food to be stored is worm');
+    end
+    
+    if food1 == worm
+        v = values;
+        %value = VALUE(worm);
+        
+        spots = spot_shuffler(7);
+        for i = spots
+            
+            while place(i,:) == 0
+                place(i,:) = WORM;
+            end
+            
+            [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                default_val(1), m1, m2);
+        end
+        m1 = mean(hpc_sum);
+        m2 = mean(pfc_sum);
+        disp(['HPC Consolidation after 1st cache: ', num2str(m1)]);
+        disp(['PFC Consolidation after 1st cache: ', num2str(m2)]);
+        %     value = VALUE(peanut);
+        %     for i = 8:14
+        %         while place(i,:) == 0
+        %             place(i,:) = PEANUT;
+        %         end
+        %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        %     end
+    else
+        %value = VALUE(peanut);
+        v = default_val;
+        
+        spots = spot_shuffler(8, 14);
+        for i = spots
+            while place(i,:) == 0
+                place(i,:) = PEANUT;
+            end
+            [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
+                default_val(2), m1, m2);
+        end
+        m1 = mean(hpc_sum);
+        m2 = mean(pfc_sum);
+        disp(['HPC Consolidation after 1st cache: ', num2str(m1)]);
+        disp(['PFC Consolidation after 1st cache: ', num2str(m2)]);
+        %     value = VALUE(worm);
+        %     for i = 1:7
+        %         while place(i,:) == 0
+        %             place(i,:) = WORM;
+        %         end
+        %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        %     end
+    end
+    
+    spots = spot_shuffler(PLACE_CELLS);
     for i = spots
         
-        while place(i,:) == 0
-            place(i,:) = WORM;
+        if place(i,:) == WORM
+            value = v(1);
+        elseif place(i,:) == PEANUT
+            value = v(2);
         end
         
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-            default_val(1));
+        [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), ...
+            cycles*time1, value, m1, m2);
+        %disp(base_inh);
     end
-    %     value = VALUE(peanut);
-    %     for i = 8:14
-    %         while place(i,:) == 0
-    %             place(i,:) = PEANUT;
-    %         end
-    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-    %     end
-else
-    %value = VALUE(peanut);
-    v = default_val;
     
-    spots = spot_shuffler(8, 14);
-    for i = spots
-        while place(i,:) == 0
-            place(i,:) = PEANUT;
+    m1 = mean(hpc_sum);
+    m2 = mean(pfc_sum);
+    disp(['HPC Consolidation after 120 hours: ', num2str(m1)]);
+    disp(['PFC Consolidation after 120 hours: ', num2str(m2)]);
+    
+    if food1 == worm
+        v = default_val;
+        spots = spot_shuffler(7);
+        for i = spots
+            while place(i,:) == 0
+                place(i,:) = PEANUT;
+            end
+            [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value, m1, m2);
         end
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
-            default_val(2));
-    end
-    %     value = VALUE(worm);
-    %     for i = 1:7
-    %         while place(i,:) == 0
-    %             place(i,:) = WORM;
-    %         end
-    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-    %     end
-end
-
-spots = spot_shuffler(PLACE_CELLS);
-for i = spots
-    
-    if place(i,:) == WORM
-        value = v(1);
-    elseif place(i,:) == PEANUT
-        value = v(2);
-    end
-    
-    [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), ...
-        cycles*time1, value, m1, m2);
-end
-
-m1 = mean(hpc_sum);
-m2 = mean(pfc_sum);
-disp(['HPC Consolidation after 120 hours: ', num2str(m1)]);
-disp(['PFC Consolidation after 120 hours: ', num2str(m2)]);
-
-if food1 == worm
-    v = default_val;
-    spots = spot_shuffler(7);
-    for i = spots
-        while place(i,:) == 0
-            place(i,:) = PEANUT;
+        m1 = mean(hpc_sum);
+        m2 = mean(pfc_sum);
+        disp(['HPC Consolidation after 2nd cache: ', num2str(m1)]);
+        disp(['PFC Consolidation after 2nd cache: ', num2str(m2)]);
+        %     value = VALUE(peanut);
+        %     for i = 8:14
+        %         while place(i,:) == 0
+        %             place(i,:) = PEANUT;
+        %         end
+        %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        %     end
+    else
+        v = values;
+        spots = spot_shuffler(8,14);
+        for i = spots
+            while place(i,:) == 0
+                place(i,:) = WORM;
+            end
+            [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value, m1, m2);
         end
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        m1 = mean(hpc_sum);
+        m2 = mean(pfc_sum);
+        disp(['HPC Consolidation after 2nd cache: ', num2str(m1)]);
+        disp(['PFC Consolidation after 2nd cache: ', num2str(m2)]);
+        %     value = VALUE(worm);
+        %     for i = 1:7
+        %         while place(i,:) == 0
+        %             place(i,:) = WORM;
+        %         end
+        %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        %     end
     end
-    %     value = VALUE(peanut);
-    %     for i = 8:14
-    %         while place(i,:) == 0
-    %             place(i,:) = PEANUT;
-    %         end
-    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
-    %     end
-else
-    v = values;
-    spots = spot_shuffler(8,14);
+    
+    spots = spot_shuffler(PLACE_CELLS);
     for i = spots
-        while place(i,:) == 0
-            place(i,:) = WORM;
+        
+        if place(i,:) == WORM
+            value = v(1);
+        elseif place(i,:) == PEANUT
+            value = v(2);
         end
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+        
+        [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), ...
+            cycles*time2, value, m1, m2);
+        %disp(base_inh);
     end
-    %     value = VALUE(worm);
-    %     for i = 1:7
-    %         while place(i,:) == 0
-    %             place(i,:) = WORM;
-    %         end
-    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, value);
+    m1 = mean(hpc_sum);
+    m2 = mean(pfc_sum);
+    
+    disp(['HPC Consolidation after ', num2str(time2), ' hours: ', num2str(m1)]);
+    disp(['PFC Consolidation after ', num2str(time2), ' hours: ', num2str(m2)]);
+    
+    %
+    % if k == 1
+    %     for i = 1:14
+    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time1, value);
     %     end
-end
-
-spots = spot_shuffler(PLACE_CELLS);
-for i = spots
+    % else
+    %     for i = 1:14
+    %         cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time2, value);
+    %     end
+    % end
     
-    if place(i,:) == WORM
-        value = v(1);
-    elseif place(i,:) == PEANUT
-        value = v(2);
-    end
+    global TRIAL_DIR;
+    filename = horzcat(TRIAL_DIR, 'post learning', '_variables');
+    save(filename);
     
-    [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), ...
-        cycles*time2, value, m1, m2);
+    [checked_places side_pref avg_checks first_checked] = place_slot_check; % mean_spot_check();
+    
 end
-m1 = mean(hpc_sum);
-m2 = mean(pfc_sum);
-
-disp(['HPC Consolidation after ', num2str(time2), ' hours: ', num2str(m1)]);
-disp(['PFC Consolidation after ', num2str(time2), ' hours: ', num2str(m2)]);
-
-
-if k == 1
-    for i = 1:14
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time1, value);
-    end
-else
-    for i = 1:14
-        cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*time2, value);
-    end
-end
-
-global TRIAL_DIR;
-filename = horzcat(TRIAL_DIR, 'post learning', '_variables');
-save(filename);
-
-[checked_places side_pref avg_checks first_checked] = place_slot_check; % mean_spot_check();
-
 
 filename = horzcat(TRIAL_DIR, 'after final trial ', '_variables');
 save(filename);
