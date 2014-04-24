@@ -1,5 +1,5 @@
 function [final_place_activity sum1 sum2] = cycle_net( place_stim, ...
-    food_stim, cycles, value, sum1, sum2, hpc_activity, pfc_activity)
+    food_stim, cycles, value, sum1, sum2)
 
 global pfc;
 global hpc;
@@ -40,10 +40,13 @@ end
 if nargin < 5
     sum1 = 0;
     sum2 = 0;
-    hpc_activity = 0;
-    pfc_activity = 0;
 end
-thresh = -.24;
+
+thresh = -.075;
+
+hpc_activity = 0;
+pfc_activity = 0;
+
 for j = 2:cycles
     pfc_out = pfc(j-1,:);
     hpc_out = hpc(j-1,:);
@@ -93,17 +96,20 @@ for j = 2:cycles
     sum2 = sum2 + pfc_activity;
 %     show_weights('Seeing stuff', 1);
 %     drawnow;
-end
-ratio = hpc_activity/pfc_activity;
-base_prev = base_inh;
-if ratio >= 1
-    base_inh = base_inh + -.001;
-elseif ratio < 1 && base_prev > thresh
-    base_inh = base_inh * 1/ratio;
-elseif base_prev <= thresh
-    base_inh = thresh;
-end
 
+    ratio = sum1/sum2; % hpc/pfc activity. if pfc is stronger, ratio will
+                        % be < 1
+
+    base_prev = base_inh;
+    
+    if base_prev > thresh && ratio < 3
+        base_inh = base_prev - (0.000001/ratio);
+    elseif base_prev <= thresh
+        base_inh = thresh;
+    end
+    w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+end
+    
 final_place_activity = mean(place_region(6:cycles,:));
 
 end
