@@ -2,7 +2,7 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     global PLACE_SLOTS;
     global PLACE_CELLS;
     global cycles;
-    
+
     global FOODED_SLOTS;
     FOODED_SLOTS = PLACE_SLOTS;
 
