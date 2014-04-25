@@ -53,6 +53,8 @@ global w_food_to_place;
 global w_place_to_food;
 
 global w_pfc_to_hpc;
+global w_pfc_to_food_inh;
+global w_pfc_to_place_inh;
 
 global w_food_to_pfc;
 global w_place_to_pfc;
@@ -432,8 +434,8 @@ for j = 1:4
         m2 = 0;
         base_inh = -.0001;
         %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-        w_pfc_to_food = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-        w_pfc_to_place = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+        w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+        w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
         if k == 1
             if food1 == 1
                 disp('First food to be stored is worm');
@@ -609,8 +611,8 @@ for k = 1:2
     
     base_inh = base_inh_init;
     %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-    w_pfc_to_food = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-    w_pfc_to_place = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+    w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+    w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
     
     disp('TESTING');
     if food1(1) == worm

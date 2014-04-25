@@ -23,6 +23,8 @@ global w_food_to_pfc;
 global w_pfc_to_place;
 global w_place_to_pfc;
 global w_pfc_to_hpc;
+global w_pfc_to_food_inh;
+global w_pfc_to_place_inh;
 
 global is_learning;
 
@@ -109,8 +111,8 @@ for j = 2:cycles
 %         base_inh = thresh;
     end
     %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-    w_pfc_to_food = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-    w_pfc_to_place = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+    w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+    w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
 end
     
 final_place_activity = mean(place_region(6:cycles,:));
