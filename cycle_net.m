@@ -74,7 +74,8 @@ for j = 2:cycles
     cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
   
     % ADDED 4/8
-   cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+   %cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+   
     
     % ADDED 4/8
 
@@ -107,7 +108,9 @@ for j = 2:cycles
 %     elseif base_prev <= thresh
 %         base_inh = thresh;
     end
-    w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+    %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+    w_pfc_to_food = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+    w_pfc_to_place = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
 end
     
 final_place_activity = mean(place_region(6:cycles,:));

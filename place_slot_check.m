@@ -1,8 +1,8 @@
 function [checked_places side_pref avg_checks first_checked] = place_slot_check()
-    global PLACE_SLOTS;
+global PLACE_SLOTS;
     global PLACE_CELLS;
     global cycles;
-
+    
     global FOODED_SLOTS;
     FOODED_SLOTS = PLACE_SLOTS;
 
@@ -40,14 +40,14 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     
     first_checked = avg_checks(1)<8;
 
-%     figure;
-%     title('Place dist');
-%     plot(avg_checks);
-%     drawnow;
+% figure;
+% title('Place dist');
+% plot(avg_checks);
+% drawnow;
 end
 
 function [slot_signal slot] = find_place(place_response)
-    global FOODED_SLOTS;
+global FOODED_SLOTS;
     global PLACE_CELLS;
     
     vars = zeros(PLACE_CELLS,1);
@@ -60,12 +60,12 @@ function [slot_signal slot] = find_place(place_response)
     slot = find(vars==min(vars));
     slot_signal = FOODED_SLOTS(slot, :);
     a = -2*ones(1,14);
-    fs =  FOODED_SLOTS(slot,:);
+    fs = FOODED_SLOTS(slot,:);
     FOODED_SLOTS(slot,:) = FOODED_SLOTS(slot,:)*0 - 35;
 end
 
 function side_pref = side_pref_calc (ranked_slots)
-    global PLACE_CELLS;
+global PLACE_CELLS;
     
     first_side = zeros(PLACE_CELLS,1);
     first_side(ranked_slots<8) = 1;

@@ -64,18 +64,12 @@ for e=1:1
         mkdir(TRIAL_DIR);
         init_val = VALUE;
         
-        [place_responses(i,:) side_pref checked_place first_checked ...
-         place_responses124(i,:) side_pref124 checked_place124 first_checked124] = ...
+        [place_responses(i,:) side_pref checked_place first_checked] = ...
             bg_experiment(trial_type, cycles, is_disp_weights);
         
         place_stats(i,:) = mean(side_pref);
         checked_places{i} = checked_place;
         first_checkeds(i) = first_checked;
-        
-        place_stats124(i,:) = mean(side_pref124);
-        checked_places124{i} = checked_place124;
-        first_checkeds124(i) = first_checked124;        
-        
         is_disp_weights = false;
         message = horzcat('trial ', num2str(i), ' complete');
         disp(message);
@@ -83,14 +77,10 @@ for e=1:1
     
     avg_first_checks = sum(first_checkeds) / runs;
     avg_side_preference = mean(place_stats(:,1));
-
-    avg_first_checks124 = sum(first_checkeds124) / runs;
-    avg_side_preference124 = mean(place_stats124(:,1));
     
     trials = {INP_STR, VALUE, mean(place_stats(:,2)), avg_side_preference, ...
-        place_responses, place_stats, checked_places, '124 trials',...
-        mean(place_stats124(:,2)), avg_side_preference124, ...
-        place_responses124, place_stats124, checked_places124,};
+        place_responses, place_stats, checked_places, ...
+        avg_first_checks, avg_side_preference};
     
     %v = v+1;
     %end
@@ -101,15 +91,8 @@ for e=1:1
     fsp = 'fig_side_prefs';
     
     figure;
-    title('First Check 4 %');
+    title('First Check %');
     bar(avg_first_checks);
-    drawnow;
-    % strrep(ffc, '%d', num2str(e))
-    saveas(gcf, horzcat(DIR, '\', ffc, '_', num2str(e)), 'fig');
-
-    figure;
-    title('First Check 124 %');
-    bar(avg_first_checks124);
     drawnow;
     % strrep(ffc, '%d', num2str(e))
     saveas(gcf, horzcat(DIR, '\', ffc, '_', num2str(e)), 'fig');
@@ -120,25 +103,9 @@ for e=1:1
         l = 2*k;
         temp(l-1) = avg_side_preference(k);
         temp(l) = 6- avg_side_preference(k);
- 
-        temp124(l-1) = avg_side_preference124(k);
-        temp124(l) = 6- avg_side_preference124(k);
     end
     
     avg_side_preference = temp;
-    
-    avg_side_preference124 = temp124;
-
-    figure;
-    title('Side Preferences 124 %');
-    for i = 1:1
-        k = i*2;
-        bar(k-1, avg_side_preference124(k-1),'b');
-        hold on
-        bar(k, avg_side_preference124(k),'r');
-        hold on
-    end
-    drawnow;
     
     figure;
     title('Side Preferences %');
@@ -154,8 +121,7 @@ for e=1:1
     saveas(gcf, horzcat(DIR, '\', fsp, '_', num2str(e)), 'fig');
 end
 
-save(filename,'trials', 'avg_first_checks', 'avg_side_preference', ...
-    'avg_first_checks124', 'avg_side_preference124');
+save(filename,'trials', 'avg_first_checks', 'avg_side_preference');
 % profile viewer
 % profile off
 end

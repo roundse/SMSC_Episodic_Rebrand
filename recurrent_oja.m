@@ -14,6 +14,7 @@ alpha = 5;
 
 if b_hpc == true
         eta = .4;
+        decay = .1;
         
 else
         eta = .0000001;
