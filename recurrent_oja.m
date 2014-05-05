@@ -1,10 +1,10 @@
-function [wy wx] = recurrent_oja(output, old_output, input, ...
-                                    output_weights, input_weights, value, ...
-                                    b_hpc)
+function [wy wx] = recurrent_oja(output, old_output, input, output_weights, ...
+    output_weights_old, input_weights, input_weights_old, value, b_hpc)
 
-if nargin < 6
+if nargin < 8
     value = 1;
 end
+
 
 % global hpc_learning_rate;
 % global pfc_learning_rate;
@@ -14,10 +14,11 @@ alpha = 5;
 
 if b_hpc == true
         eta = .4;
-        decay = .1;
+        decay = .15;
         
 else
         eta = .0000001;
+        decay = 0;
 
 end
 
@@ -27,7 +28,9 @@ x = input;
 y_old = old_output;
 y = output;
 wx = output_weights';
+wx_prev = output_weights_old';
 wy = input_weights';
+wy_prev = input_weights_old';
 
 n = length(x);
 m = length(y);
@@ -39,7 +42,9 @@ for i = 1:I
     for j = 1:J
         if wx(j,i) ~= 0
             wx_cur = wx(j,i);
-            delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
+            d = 1 - decay * (wx(j,i) - wx_prev(j,i));
+            delta_wx = (eta*y(j) * (x(i) - y*wx(:,i)) - d);
+            %disp(delta_wx);
             wx(j,i) = wx_cur + delta_wx;
         end
     end
@@ -47,11 +52,18 @@ end
 
 % input weights
 [J I] = size(wy);
+
+if size(wy) ~= size(wy_prev)
+    wy_prev = wy_prev';
+end
+
 for i = 1:I
     for j = 1:J
         if wy(j,i) ~= 0
             wy_cur = wy(j,i);
-            delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
+            d = 1 - decay * (wy(j,i) - wy_prev(j,i));
+            delta_wy = (eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)') - d);
+           % disp(delta_wy);
             wy(j,i) = wy_cur + delta_wy;
         end
     end

@@ -48,18 +48,31 @@ global w_hpc_to_food;
 global w_hpc_to_place;
 global w_hpc_to_hpc;
 
+global w_food_to_hpc_prev;
+global w_place_to_hpc_prev;
+global w_hpc_to_food_prev;
+global w_hpc_to_place_prev;
+
 %%%% NEW WEIGHTS (4/8/14) %%%%
 global w_food_to_place;
 global w_place_to_food;
 
-global w_pfc_to_hpc;
-global w_pfc_to_food_inh;
-global w_pfc_to_place_inh;
+global w_food_to_place_prev;
+global w_place_to_food_prev;
+
+%global w_pfc_to_hpc;
+% global w_pfc_to_food_inh;
+% global w_pfc_to_place_inh;
 
 global w_food_to_pfc;
 global w_place_to_pfc;
 global w_pfc_to_food;
 global w_pfc_to_place;
+
+global w_food_to_pfc_prev;
+global w_place_to_pfc_prev;
+global w_pfc_to_food_prev;
+global w_pfc_to_place_prev;
 
 global pfc_in_queue;
 global pfc_weight_queue;
@@ -97,10 +110,10 @@ food_weight_queue = {};
 w_food_in = eye(FOOD_CELLS);
 w_food_to_food = zeros(FOOD_CELLS);
 
-global base_inh;
-
-base_inh = -.00001;
-base_inh_init = -.00001;
+% global base_inh;
+% 
+% base_inh = -.00001;
+% base_inh_init = -.00001;
 
 w_food_to_hpc = .5 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
 w_hpc_to_food = w_food_to_hpc';
@@ -120,6 +133,21 @@ global w_pfc_to_place_init;
 global w_place_to_pfc_init;
 w_pfc_to_place_init = w_pfc_to_place;
 w_place_to_pfc_init = w_place_to_pfc;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+w_food_to_hpc_prev = w_food_to_hpc;
+w_place_to_hpc_prev = w_place_to_hpc;
+w_hpc_to_food_prev = w_hpc_to_food;
+w_hpc_to_place_prev = w_hpc_to_place;
+
+w_food_to_pfc_prev = w_food_to_pfc;
+w_place_to_pfc_prev = w_place_to_pfc;
+w_pfc_to_food_prev = w_pfc_to_food;
+w_pfc_to_place_prev = w_pfc_to_place;
+
+w_food_to_place_prev = w_food_to_place;
+w_place_to_food_prev = w_place_to_food;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -169,6 +197,7 @@ for i = 1:PLACE_CELLS
 end
 
 place = place';
+global first;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Task 1: Pre-store food in place slots
@@ -432,10 +461,10 @@ for j = 1:4
     for k = 1:2
         m1 = 0;
         m2 = 0;
-        base_inh = -.0001;
-        %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-        w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-        w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+%         base_inh = -.0001;
+%         w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+%         w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+%         w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
         if k == 1
             if food1 == 1
                 disp('First food to be stored is worm');
@@ -461,8 +490,10 @@ for j = 1:4
                     place(i,:) = WORM;
                 end
                 %[fpa hpc_suma(i) pfc_suma(i)] =
+                first = true;
                 [fpa hpc_sum(i) pfc_sum(i)] = cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, ...
                     default_val(1), m1, m2); % !BUG
+                first = false;
             end
             %value = VALUE(peanut);
             spots = spot_shuffler(8, 14);
@@ -609,10 +640,10 @@ for k = 1:2
     hpc_sum(:) = 0;
     pfc_sum(:) = 0;
     
-    base_inh = base_inh_init;
-    %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-    w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-    w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+%     base_inh = base_inh_init;
+%     %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+%     w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+%     w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
     
     disp('TESTING');
     if food1(1) == worm

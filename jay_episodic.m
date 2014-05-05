@@ -7,6 +7,11 @@ global hpc_learning_rate;
 global pfc_learning_rate;
 global INP_STR;
 
+global wx_prev;
+global wy_prev;
+wx_prev = 0;
+wy_prev = 0;
+
 global cycles;
 global VALUE;
 % 

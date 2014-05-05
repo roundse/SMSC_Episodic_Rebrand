@@ -11,6 +11,10 @@ global w_hpc_to_food w_food_to_hpc;
 global w_pfc_to_food w_food_to_pfc;
 global w_place_to_food w_food_to_place;
 
+global w_hpc_to_food_prev w_food_to_hpc_prev;
+global w_pfc_to_food_prev w_food_to_pfc_prev;
+global w_place_to_food_prev w_food_to_place_prev;
+
 food_eye = eye(FOOD_CELLS);
 
 queue_pos = length(food_in_queue)+1;
@@ -31,18 +35,25 @@ if nargin < 3
     
     returnable = food_out;
     if input_weights
-        
+
         [w_hpc_to_food w_food_to_hpc] = recurrent_oja(food_out, food_in, ...
-            hpc_in, w_hpc_to_food, w_food_to_hpc, VAL, 1);
+            hpc_in, w_hpc_to_food, w_hpc_to_food_prev, w_food_to_hpc, ...
+            w_hpc_to_food_prev, VAL, 1);
         
         [w_pfc_to_food w_food_to_pfc] = recurrent_oja(food_out, food_in, ...
-            hpc_in, w_pfc_to_food, w_food_to_pfc, VAL, 0);
+            hpc_in, w_pfc_to_food, w_pfc_to_food_prev, w_food_to_pfc, ...
+            w_food_to_pfc_prev, VAL, 0);
 
-        
         [w_place_to_food w_food_to_place] = recurrent_oja(food_out, ...
-            food_in, hpc_in, w_place_to_food, w_food_to_place, VAL, 0);
+            food_in, hpc_in, w_place_to_food, w_place_to_food_prev, ...
+            w_food_to_place, w_food_to_place_prev, VAL, 0);
         
-        
+        w_hpc_to_food_prev = w_hpc_to_food;
+        w_food_to_hpc_prev = w_food_to_hpc;
+        w_pfc_to_food_prev = w_pfc_to_food;
+        w_food_to_pfc_prev = w_food_to_pfc;
+        w_place_to_food_prev = w_place_to_food;
+        w_food_to_place_prev = w_food_to_place;
     end
     
     food_in_queue = {};

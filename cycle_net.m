@@ -22,9 +22,9 @@ global w_pfc_to_food;
 global w_food_to_pfc;
 global w_pfc_to_place;
 global w_place_to_pfc;
-global w_pfc_to_hpc;
-global w_pfc_to_food_inh;
-global w_pfc_to_place_inh;
+% global w_pfc_to_hpc;
+% global w_pfc_to_food_inh;
+% global w_pfc_to_place_inh;
 
 global is_learning;
 
@@ -32,8 +32,8 @@ pfc = zeros(cycles, PFC_SIZE);
 hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
-
-global base_inh;
+% 
+% global base_inh;
 
 if nargin < 4
     value = 1;
@@ -100,19 +100,21 @@ for j = 2:cycles
 %     show_weights('Seeing stuff', 1);
 %     drawnow;
 
-    ratio = sum1/sum2; % hpc/pfc activity. if pfc is stronger, ratio will
-                        % be < 1
 
-    base_prev = base_inh;
-    
-    if ratio >= 0.01 && ratio < 3
-        base_inh = base_prev - (0.00001/ratio);
-%     elseif base_prev <= thresh
-%         base_inh = thresh;
-    end
-    %w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-    w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-    w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+
+%     ratio = sum1/sum2; % hpc/pfc activity. if pfc is stronger, ratio will
+%                         % be < 1
+% 
+%     base_prev = base_inh;
+%     
+%     if ratio >= 0.01 && ratio < 3
+%         base_inh = base_prev - (0.00001/ratio);
+% %     elseif base_prev <= thresh
+% %         base_inh = thresh;
+%     end
+%     w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
+%     w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
+%     w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
 end
     
 final_place_activity = mean(place_region(6:cycles,:));
