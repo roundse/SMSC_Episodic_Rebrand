@@ -14,7 +14,7 @@ alpha = 5;
 
 if b_hpc == true
         eta = .4;
-        decay = .15;
+        decay = 0;
         
 else
         eta = .0000001;
@@ -42,10 +42,15 @@ for i = 1:I
     for j = 1:J
         if wx(j,i) ~= 0
             wx_cur = wx(j,i);
-            d = 1 - decay * (wx(j,i) - wx_prev(j,i));
-            delta_wx = (eta*y(j) * (x(i) - y*wx(:,i)) - d);
+            delta_wx = (eta*y(j) * (x(i) - y*wx(:,i)));
             %disp(delta_wx);
-            wx(j,i) = wx_cur + delta_wx;
+            temp_x = wx_cur + delta_wx ;
+%             d = 1 - (decay * wx_prev(j,i));
+            d = decay * (temp_x - wx_prev(j,i));
+            wx(j,i) = temp_x - d;
+            if wx(j,i) < 0
+                wx(j,i) = 0.001;
+            end
         end
     end
 end
@@ -61,10 +66,17 @@ for i = 1:I
     for j = 1:J
         if wy(j,i) ~= 0
             wy_cur = wy(j,i);
-            d = 1 - decay * (wy(j,i) - wy_prev(j,i));
-            delta_wy = (eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)') - d);
+            d = 1 - (decay * wy_prev(j,i));
+            delta_wy = (eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)'));
+            
+            temp_y = wy_cur + delta_wy ;
+%             d = 1 - (decay * wx_prev(j,i));
+            d = decay * (temp_y - wy_prev(j,i));
            % disp(delta_wy);
-            wy(j,i) = wy_cur + delta_wy;
+            wy(j,i) = temp_y - d;
+            if wy(j,i) < 0
+                wy(j,i) = 0;
+            end
         end
     end
 end
