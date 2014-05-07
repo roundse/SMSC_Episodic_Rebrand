@@ -20,7 +20,7 @@ global VALUE;
 
 INP_STR = 2;
 
-runs = 1;
+runs = 10;
 cycles = 14;
 
 trial_type = 3;

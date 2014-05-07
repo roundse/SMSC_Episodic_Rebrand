@@ -14,14 +14,14 @@ alpha = 5;
 
 if b_hpc == true
         eta = .4;
-        decay = 0;
+        decay = .91;
         
 else
         eta = .0000001;
-        decay = 0;
+        decay = 0.00000001;
 
 end
-
+thresh = -2;
 alpha = sqrt(alpha);
 
 x = input;
@@ -43,13 +43,12 @@ for i = 1:I
         if wx(j,i) ~= 0
             wx_cur = wx(j,i);
             delta_wx = (eta*y(j) * (x(i) - y*wx(:,i)));
-            %disp(delta_wx);
             temp_x = wx_cur + delta_wx ;
 %             d = 1 - (decay * wx_prev(j,i));
             d = decay * (temp_x - wx_prev(j,i));
             wx(j,i) = temp_x - d;
-            if wx(j,i) < 0
-                wx(j,i) = 0.001;
+            if wx(j,i) < thresh
+                wx(j,i) = thresh;
             end
         end
     end
@@ -66,16 +65,13 @@ for i = 1:I
     for j = 1:J
         if wy(j,i) ~= 0
             wy_cur = wy(j,i);
-            d = 1 - (decay * wy_prev(j,i));
             delta_wy = (eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)'));
-            
             temp_y = wy_cur + delta_wy ;
 %             d = 1 - (decay * wx_prev(j,i));
             d = decay * (temp_y - wy_prev(j,i));
-           % disp(delta_wy);
             wy(j,i) = temp_y - d;
-            if wy(j,i) < 0
-                wy(j,i) = 0;
+            if wy(j,i) < thresh
+                wy(j,i) = thresh;
             end
         end
     end
