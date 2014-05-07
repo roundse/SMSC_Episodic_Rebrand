@@ -14,11 +14,11 @@ alpha = 5;
 
 if b_hpc == true
         eta = .4;
-        decay = .91;
+        decay = .925;
         
 else
         eta = .0000001;
-        decay = 0.00000001;
+        decay = 0.0000000001;
 
 end
 thresh = -2;
