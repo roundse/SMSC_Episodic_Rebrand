@@ -93,10 +93,11 @@ for j = 2:cycles
     food(j,:) = cycle_food({food(j-1,:), hpc(j,:), pfc(j,:)}, is_learning); % !BUG
    % food(j,:) = cycle_food({food(j-1,:), pfc(j,:)}, is_learning);
         
-    hpc_activity = mean(hpc(j,:));
-    sum1 = sum1 + hpc_activity;
-    pfc_activity = mean(pfc(j,:));
-    sum2 = sum2 + pfc_activity;
+%     hpc_activity = mean(hpc(j,:));
+%     sum1 = sum1 + hpc_activity;
+%     pfc_activity = mean(pfc(j,:));
+%     sum2 = sum2 + pfc_activity;
+   
 %     show_weights('Seeing stuff', 1);
 %     drawnow;
 
@@ -116,7 +117,10 @@ for j = 2:cycles
 %     w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
 %     w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
 end
-    
+
+sum1 = sum1 + mean(mean(hpc));
+sum2 = sum2 + mean(mean(pfc));
+
 final_place_activity = mean(place_region(6:cycles,:));
 
 end

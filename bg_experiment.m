@@ -6,7 +6,6 @@ global INP_STR;
 global GAIN;
 GAIN = 5;
 
-
 %%% NEW (4/8/14) %%%%%
 global PFC_SIZE;
 PFC_SIZE = 250;
@@ -414,7 +413,7 @@ worm_120_1 = false;
 peanut_120_1 = false;
 
 for j = 1:4
-    
+    show_weights(['Training pair ', num2str(j)], is_disp_weights);
     disp(['Training pair ', num2str(j)]);
     not_found = false;
     while ( ~not_found )
@@ -614,7 +613,7 @@ worm_1 = false;
 peanut_1 = false;
 
 for k = 1:2
-    
+    show_weights(['Testing ', num2str(k)], is_disp_weights);
     not_found = false;
     while ( ~not_found )
         f = rand;

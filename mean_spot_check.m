@@ -25,6 +25,7 @@ for k = 1:testing_trials
     end
     hpc_place_responses(k,:) = mean(hpc(3:cycles,:));
     pfc_place_responses(k,:) = mean(pfc(3:cycles,:));
+    
     total_place_responses(k,:) = (hpc_place_responses(k,:) + ...
                                     pfc_place_responses(k,:)) / 2;
     checked_places(k,:) = find_place(total_place_responses(k,:));

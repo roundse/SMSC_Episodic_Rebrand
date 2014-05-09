@@ -55,7 +55,7 @@ switch trial_type
         values = [-1.5 2];
 end
 
-is_disp_weights = 0;
+is_disp_weights = 1;
 [num_values temp] = size(values);
 % profile on
 for e=1:1
