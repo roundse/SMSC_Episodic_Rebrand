@@ -1,5 +1,4 @@
-function [final_place_activity sum1 sum2] = cycle_net( place_stim, ...
-    food_stim, cycles, value, sum1, sum2)
+function final_place_activity = cycle_net(place_stim, food_stim, cycles, value)
 
 global pfc;
 global hpc;
@@ -9,119 +8,117 @@ global food;
 global PLACE_CELLS;
 global FOOD_CELLS;
 global HPC_SIZE;
-global PFC_SIZE;
 
 global w_hpc_to_place;
 global w_hpc_to_food;
 global w_place_to_hpc;
 global w_food_to_hpc;
 
+global is_learning;
 
-global w_place_to_food;
 global w_pfc_to_food;
 global w_food_to_pfc;
 global w_pfc_to_place;
 global w_place_to_pfc;
-% global w_pfc_to_hpc;
-% global w_pfc_to_food_inh;
-% global w_pfc_to_place_inh;
 
-global is_learning;
+global hpc_cumul_activity;
+global pfc_cumul_activity;
 
-pfc = zeros(cycles, PFC_SIZE);
+
+% TEMPORARY/EXPERIMENTAL WEIGHTS
+global w_pfc_to_hpc;
+global w_pfc_to_pfc;
+global w_hpc_to_hpc;
+% ------------------------------
+
+global lesion_pfc;
+global lesion_hpc;
+global is_testing;
+
+global run_hpc;
+global run_pfc;
+global switch_lesion;
+
+global place_activity;
+
+if lesion_pfc | lesion_hpc
+    if ~switch_lesion
+        run_hpc = ~(lesion_hpc & is_testing);
+        run_pfc = ~(lesion_pfc & is_testing);
+    else
+        run_hpc = ~(lesion_hpc); %& is_testing);
+        run_pfc = ~(lesion_pfc); %& is_testing); 
+    end
+else
+    run_hpc = 1;
+    run_pfc = 1;
+end
 hpc = zeros(cycles, HPC_SIZE);
 food = zeros(cycles, FOOD_CELLS);
 place_region = zeros(cycles, PLACE_CELLS);
-% 
-% global base_inh;
 
-if nargin < 4
-    value = 1;
-end
-
-if nargin < 5
-    sum1 = 0;
-    sum2 = 0;
-end
-
-thresh = -.075;
-
-hpc_activity = 0;
-pfc_activity = 0;
+p_eye = eye(PLACE_CELLS);
+f_eye = eye(FOOD_CELLS);
 
 for j = 2:cycles
-    pfc_out = pfc(j-1,:);
-    hpc_out = hpc(j-1,:);
-    place_out = place_region(j-1,:);
+    if ~run_hpc
+        hpc = hpc .* 0;
+    end
+    
+    if ~run_pfc
+        pfc = pfc .* 0;
+    end
+
+    hpc_out = hpc(j-1, :);
+    place_out = place_region(j-1, :);
     food_out = food(j-1, :);
+    pfc_out = pfc(j-1, :);
 
-    cycle_place(place_out, eye(PLACE_CELLS), place_stim, value);
+    cycle_place(place_out, p_eye, place_stim);
+
     cycle_place(place_out, w_hpc_to_place, hpc_out);
-    % ADDED 4/8
-    cycle_place(place_out, w_pfc_to_place, pfc_out, value);
-    
+    cycle_place(place_out, w_pfc_to_place, pfc_out);
 
-    cycle_food(food_out, eye(FOOD_CELLS), food_stim, value);
-    cycle_food(food_out, w_hpc_to_food, hpc_out, value);
-    % ADDED 4/8
-    cycle_food(food_out, w_place_to_food, place_out, value); % maybe add value?
-    cycle_food(food_out, w_pfc_to_food, pfc_out, value);
+    cycle_food(food_out, f_eye, food_stim);
+    
+    cycle_food(food_out, w_hpc_to_food, hpc_out);
+    cycle_food(food_out, w_pfc_to_food, pfc_out);
 
-    cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
-    cycle_pfc(pfc_out, w_place_to_pfc, place_out, value);
-    
-    cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-    cycle_pfc(pfc_out, w_food_to_pfc, food_out, value);
-    
-    cycle_hpc(hpc_out, w_food_to_hpc,  food_stim, value);
+    if run_hpc
+        cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
+        cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
+        cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
+        %cycle_hpc(hpc_out, w_hpc_to_hpc, hpc_out, value);
+    end
+
+    if run_pfc
+        cycle_pfc(pfc_out, w_place_to_pfc, place_out, value);
+        cycle_pfc(pfc_out, w_food_to_pfc, food_out, value);
+        cycle_pfc(pfc_out, w_pfc_to_hpc, hpc_out, value);
+        %cycle_pfc(pfc_out, w_pfc_to_pfc, pfc_out, value);
+    end
   
-    % ADDED 4/8
-   %cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
-   
-    
-    % ADDED 4/8
-
-    cycle_pfc(pfc_out, w_food_to_pfc, food_stim, value);
-
-  
-    % ADDED 4/8
-    pfc(j,:) = cycle_pfc(pfc_out, is_learning);
-    
-    hpc(j,:) = cycle_hpc(hpc_out, is_learning);
-    place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:), pfc(j,:)}, is_learning);
-   % place_region(j,:) = cycle_place({place_region(j-1,:), pfc(j,:)}, is_learning);
-    food(j,:) = cycle_food({food(j-1,:), hpc(j,:), pfc(j,:)}, is_learning); % !BUG
-   % food(j,:) = cycle_food({food(j-1,:), pfc(j,:)}, is_learning);
-        
-%     hpc_activity = mean(hpc(j,:));
-%     sum1 = sum1 + hpc_activity;
-%     pfc_activity = mean(pfc(j,:));
-%     sum2 = sum2 + pfc_activity;
-   
-%     show_weights('Seeing stuff', 1);
-%     drawnow;
-
-
-
-%     ratio = sum1/sum2; % hpc/pfc activity. if pfc is stronger, ratio will
-%                         % be < 1
-% 
-%     base_prev = base_inh;
-%     
-%     if ratio >= 0.01 && ratio < 3
-%         base_inh = base_prev - (0.00001/ratio);
-% %     elseif base_prev <= thresh
-% %         base_inh = thresh;
-%     end
-%     w_pfc_to_hpc = base_inh .* ones(PFC_SIZE, HPC_SIZE);
-%     w_pfc_to_food_inh = base_inh .* ones(PFC_SIZE, FOOD_CELLS);
-%     w_pfc_to_place_inh = base_inh .* ones(PFC_SIZE, PLACE_CELLS);
+    if run_pfc
+        pfc(j,:) = cycle_pfc(pfc_out, is_learning);
+    end
+    if run_hpc
+        hpc(j,:) = cycle_hpc(hpc_out, is_learning);
+    end
+    place_region(j,:) = cycle_place({place_region(j-1,:), hpc(j,:), ...
+                        pfc(j,:)}, is_learning);
+    food(j,:) = cycle_food({food(j-1,:), hpc(j,:), ...
+                pfc(j,:)}, is_learning);
 end
-
-sum1 = sum1 + mean(mean(hpc));
-sum2 = sum2 + mean(mean(pfc));
 
 final_place_activity = mean(place_region(6:cycles,:));
+hpc_cumul_activity = hpc_cumul_activity + mean(mean(hpc));
+pfc_cumul_activity = pfc_cumul_activity + mean(mean(pfc));
 
+global hpc_average;
+global pfc_average;
+
+hpc_average = hpc_average + mean(hpc);
+pfc_average = pfc_average + mean(pfc);
+
+place_activity = final_place_activity;
 end
-

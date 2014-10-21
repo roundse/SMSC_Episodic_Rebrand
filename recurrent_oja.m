@@ -1,100 +1,104 @@
-function [wy wx] = recurrent_oja(output, old_output, input, output_weights, ...
-    output_weights_old, input_weights, input_weights_old, value, b_hpc)
-
-if nargin < 8
-    value = 1;
+function [wy wx] = recurrent_oja(output, old_output, input, ...
+                                 output_weights, input_weights, value)
+global is_pfc;
+                             
+if nargin < 6
+    value = 0;
 end
 
+global learning_rate;
+global pfc_learning_rate;
 
-% global hpc_learning_rate;
-% global pfc_learning_rate;
+global pfc_max;
+global hpc_max;
+global max_max_weight;
 
+global hpc_cur_decay;
 
 alpha = 5;
-
-if b_hpc == true
-        eta = .4;
-        decay = .94444;
-        % TESTING
-        
-else
-        eta = .00001;
-        decay = .00000001;
-
-end
-thresh = -2;
 alpha = sqrt(alpha);
+max = max_max_weight;
+
+if is_pfc
+    eta = pfc_learning_rate;
+    decay = 0;
+    max = pfc_max;
+else
+    eta = learning_rate;
+    hpc_decay = 0;
+    decay = hpc_decay;
+    max = hpc_max;
+end
 
 x = input;
 y_old = old_output;
 y = output;
 wx = output_weights';
-wx_prev = output_weights_old';
 wy = input_weights';
-wy_prev = input_weights_old';
 
-n = length(x);
-m = length(y);
-
-[J I] = size(wx);
+[J, I, ~] = find(wx);
+K = size(J);
+y_wx =  y*wx;
 
 % output weights
-for i = 1:I
-    for j = 1:J
-        if wx(j,i) ~= 0
-            wx_cur = wx(j,i);
-            delta_wx = (eta*y(j) * (x(i) - y*wx(:,i)));
-            temp_x = wx_cur + delta_wx ;
-%             d = 1 - (decay * wx_prev(j,i));
-            d = decay * (temp_x - wx_prev(j,i));
-            wx(j,i) = temp_x - d;
-            if wx(j,i) < thresh
-                wx(j,i) = thresh;
-            end
-        end
-    end
+for k = 1:K
+    j = J(k);
+    i = I(k);
+
+    delta_wx = eta*y(j) * (x(i) - y_wx(i));
+    wx(j,i) = (wx(j,i) + delta_wx) - (decay * delta_wx);
 end
 
 % input weights
-[J I] = size(wy);
+[J, I, ~] = find(wy);
+K = size(J);
+y_wy =  y*wy';
 
-if size(wy) ~= size(wy_prev)
-    wy_prev = wy_prev';
+for k = 1:K
+    j = J(k);
+    i = I(k);
+
+    delta_wy = eta*y(i) * (alpha*value*y_old(i) - y_wy(j));
+    wy(j,i) = (wy(j,i) + delta_wy) - (decay * delta_wy);
 end
 
-for i = 1:I
-    for j = 1:J
-        if wy(j,i) ~= 0
-            wy_cur = wy(j,i);
-            delta_wy = (eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)'));
-            temp_y = wy_cur + delta_wy ;
-%             d = 1 - (decay * wx_prev(j,i));
-            d = decay * (temp_y - wy_prev(j,i));
-            wy(j,i) = temp_y - d;
-            if wy(j,i) < thresh
-                wy(j,i) = thresh;
-            end
-        end
-    end
-end
-
-%! wy (as w_place_to_food) here turns into an array (0.5)
+wx(wx>20) = 20;
+wy(wy>20) = 20;
 
 end
-
-
 
 % function [wy wx] = recurrent_oja(output, old_output, input, ...
-%     output_weights, input_weights, value)
+%                                  output_weights, input_weights, value)
 % 
+% global is_pfc;
+%                              
 % if nargin < 6
-%     value = 1;
+%     value = 0;
 % end
 % 
 % global learning_rate;
+% global pfc_learning_rate;
+% 
+% global pfc_max;
+% global hpc_max;
+% global max_max_weight;
+% 
+% global hpc_cur_decay;
+% 
 % alpha = 5;
 % alpha = sqrt(alpha);
-% eta = learning_rate;
+% max = max_max_weight;
+% 
+% if is_pfc
+%     eta = pfc_learning_rate;
+%     decay = 0;
+%     max = pfc_max;
+% else
+%     eta = learning_rate;
+%     hpc_decay = 0.28;
+%     decay = hpc_decay;
+%     max = hpc_max;
+% end
 % 
 % x = input;
 % y_old = old_output;
@@ -110,15 +114,12 @@ end
 % % output weights
 % for i = 1:I
 %     for j = 1:J
-%         wx_cur = wx(j,i);
-%         if wx_cur ~= 0
-%             xi = x(i);
-%             yj = y(j);
-% 
-%             heb = yj*xi;
-%             oja = wx_cur*yj*yj;
-%             delta_wx = eta*(heb-oja);
-%             wx(j,i) = wx_cur + delta_wx;
+%         if wx(j,i) ~= 0
+%             wx_cur = wx(j,i);
+%             delta_wx = eta*y(j) * (x(i) - y*wx(:,i));
+%             temp_x = wx_cur + delta_wx ;
+%             d = decay * (temp_x - wx_cur);
+%             wx(j,i) = temp_x - d;
 %         end
 %     end
 % end
@@ -127,15 +128,12 @@ end
 % [J I] = size(wy);
 % for i = 1:I
 %     for j = 1:J
-%         wy_cur = wy(j,i);
-%         if wy_cur ~= 0
-%             xj = x(j);
-%             yi = y(i);
-% 
-%             heb = alpha * value * yi * xj;
-%             oja = wx_cur * yj * y_old(i);
-%             delta_wx = eta*(heb-oja);
-%             wy(j,i) = wy_cur + delta_wx;
+%         if wy(j,i) ~= 0
+%             wy_cur = wy(j,i);
+%             delta_wy = eta*y(i) * (alpha*value*y_old(i) - y*wy(j,:)');
+%             temp_y = wy_cur + delta_wy ;
+%             d = decay * (temp_y - wy_cur);
+%             wy(j,i) = temp_y - d;
 %         end
 %     end
 % end

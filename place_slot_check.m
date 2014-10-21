@@ -1,5 +1,5 @@
 function [checked_places side_pref avg_checks first_checked] = place_slot_check()
-global PLACE_SLOTS;
+    global PLACE_SLOTS;
     global PLACE_CELLS;
     global cycles;
     
@@ -25,6 +25,8 @@ global PLACE_SLOTS;
         injection_current = neutral_input/(15-p) +(rand(1,14) - 0.5 ); % <-- used for the eleminating input model
 
         final_place_activity = cycle_net(injection_current, [0 0], cycles, 0);
+        
+        save_state(p);
 
         avg = final_place_activity;
         [slot_signal ranked_slots(p)] = find_place(avg); % <-- used for the eleminating input model
@@ -47,7 +49,7 @@ global PLACE_SLOTS;
 end
 
 function [slot_signal slot] = find_place(place_response)
-global FOODED_SLOTS;
+    global FOODED_SLOTS;
     global PLACE_CELLS;
     
     vars = zeros(PLACE_CELLS,1);
@@ -58,6 +60,7 @@ global FOODED_SLOTS;
     end
        
     slot = find(vars==min(vars));
+    slot = slot(1); % in the unlikely (but still occuring) event there are multiple minimums, just take the first
     slot_signal = FOODED_SLOTS(slot, :);
     a = -2*ones(1,14);
     fs = FOODED_SLOTS(slot,:);
@@ -65,11 +68,12 @@ global FOODED_SLOTS;
 end
 
 function side_pref = side_pref_calc (ranked_slots)
-global PLACE_CELLS;
+    global PLACE_CELLS;
     
     first_side = zeros(PLACE_CELLS,1);
     first_side(ranked_slots<8) = 1;
  
-    side_pref = sum(first_side(1:6));
-
+    side_pref = sum(first_side(1:7));
+    disp('Worms in first seven checks: ');
+    disp(side_pref);
 end

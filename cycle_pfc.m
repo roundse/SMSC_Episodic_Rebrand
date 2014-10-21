@@ -1,16 +1,12 @@
 function returnable = cycle_pfc(pfc_in, input_weights, input, value)
 global w_pfc_to_pfc;
 global pfc_eye;
-global INTERNAL_LEARNING;
 
 global pfc_in_queue;
 global pfc_weight_queue;
 
 global HVAL;
 global PFC_SIZE;
-
-pfc_eye = eye(PFC_SIZE);
-w_pfc_to_pfc = zeros(PFC_SIZE);
 
 queue_pos = length(pfc_in_queue)+1;
 
@@ -19,17 +15,13 @@ if nargin < 3
     for i = 1:(queue_pos-1)
         temp_input = total_inputs + pfc_in_queue{i} * pfc_weight_queue{i};
         
-%         if input_weights
-%            w_pfc_to_pfc = oja(pfc_in, temp_input, w_pfc_to_pfc, HVAL); 
-%         end
         total_inputs = total_inputs + temp_input;
     end
     
-    food_pfc_out = activity(pfc_in, pfc_eye, total_inputs, ...
-        w_pfc_to_pfc);
+    food_pfc_out = activity(pfc_in, pfc_eye, total_inputs, w_pfc_to_pfc);
     
     returnable = food_pfc_out;
-
+    
     for l = 1:length(w_pfc_to_pfc)
         w_pfc_to_pfc(l,l) = 0;
     end
