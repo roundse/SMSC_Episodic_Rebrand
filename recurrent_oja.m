@@ -25,7 +25,7 @@ if is_pfc
     max = pfc_max;
 else
     eta = learning_rate;
-    hpc_decay = 0;
+    hpc_decay = 0.2;
     decay = hpc_decay;
     max = hpc_max;
 end

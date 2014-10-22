@@ -12,7 +12,7 @@ global GAIN;
 GAIN = 5;
 
 global HPC_SIZE;
-HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
+HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
 % by 10 for random connectivity of 10%
 global FOOD_CELLS;
 global PLACE_CELLS;
@@ -65,7 +65,7 @@ is_learning = 1;
 
 % PFC AREA
 global PFC_SIZE;
-PFC_SIZE = 250;
+PFC_SIZE = 300;
 
 global w_food_to_pfc;
 global w_place_to_pfc;
@@ -91,9 +91,9 @@ pfc_eye = eye(PFC_SIZE);
 %w_pfc_to_pfc = zeros(PFC_SIZE);
 
 %%   8.1 WAS 0.2 0.2
-w_food_to_pfc = 0.24 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_food_to_pfc = 0.26 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_food = w_food_to_pfc';
-w_place_to_pfc = 0.24 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_place_to_pfc = 0.26 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_place = w_place_to_pfc';
 
 global w_pfc_to_hpc;
@@ -484,7 +484,12 @@ for j=1:duration
                 %                   if is_testing
                 %disp(['Currently in the consolidating phase...value is ', num2str(0)]);
                 %                   end
-                cycle_net( PLACE_SLOTS(i,:), place(i,:), cycles, 0);
+                if mod(q, 4) == 0
+                    %disp('Memory replay turned ON');
+                    cycle_net( PLACE_SLOTS(i,:), place(i,:), cycles, 0);
+                else
+                    cycle_net(PLACE_SLOTS(i,:)*0, place(i,:)*0, cycles, 0);
+                end
                 
             end
         end
@@ -513,6 +518,7 @@ for j=1:duration
             HVAL = v;
             
             reward_stim(value, cycles, is_replenish);
+            cycle_net(PLACE_SLOTS(i,:), place(i,:), 3, 0);
         end
     end
     
