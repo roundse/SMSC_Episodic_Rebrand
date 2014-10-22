@@ -111,7 +111,7 @@ global w_pfc_to_pfc_prev;
 w_pfc_to_pfc_prev = w_pfc_to_pfc;
 
 global w_hpc_to_hpc;
-w_hpc_to_hpc = 0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+w_hpc_to_hpc = .01 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 global w_hpc_to_hpc_init;
 w_hpc_to_hpc_init = w_hpc_to_hpc;
 global w_hpc_to_hpc_prev;
