@@ -97,7 +97,7 @@ w_place_to_pfc = 0.26 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_place = w_place_to_pfc';
 
 global w_pfc_to_hpc;
-w_pfc_to_hpc = -.15 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+w_pfc_to_hpc = -.2 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
 global w_pfc_to_hpc_init;
 w_pfc_to_hpc_init = w_pfc_to_hpc;
 global w_pfc_to_hpc_prev
