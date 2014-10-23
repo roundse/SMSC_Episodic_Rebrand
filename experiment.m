@@ -12,7 +12,7 @@ global GAIN;
 GAIN = 5;
 
 global HPC_SIZE;
-HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
+HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
 % by 10 for random connectivity of 10%
 global FOOD_CELLS;
 global PLACE_CELLS;
@@ -20,7 +20,7 @@ FOOD_CELLS = 2;
 PLACE_CELLS = 14;
 
 EXT_CONNECT = .2;                   % Chance of connection = 20%
-INT_CONNECT = .1;
+INT_CONNECT = .01;
 
 global worm;
 global peanut;
@@ -65,7 +65,7 @@ is_learning = 1;
 
 % PFC AREA
 global PFC_SIZE;
-PFC_SIZE = 300;
+PFC_SIZE = 350;
 
 global w_food_to_pfc;
 global w_place_to_pfc;
@@ -97,7 +97,7 @@ w_place_to_pfc = 0.26 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_place = w_place_to_pfc';
 
 global w_pfc_to_hpc;
-w_pfc_to_hpc = -.2 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+w_pfc_to_hpc = -.25 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
 global w_pfc_to_hpc_init;
 w_pfc_to_hpc_init = w_pfc_to_hpc;
 global w_pfc_to_hpc_prev
