@@ -12,7 +12,7 @@ global GAIN;
 GAIN = 5;
 
 global HPC_SIZE;
-HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
+HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
 % by 10 for random connectivity of 10%
 global FOOD_CELLS;
 global PLACE_CELLS;
@@ -65,7 +65,7 @@ is_learning = 1;
 
 % PFC AREA
 global PFC_SIZE;
-PFC_SIZE = 300;
+PFC_SIZE = 350;
 
 global w_food_to_pfc;
 global w_place_to_pfc;
