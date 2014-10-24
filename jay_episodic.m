@@ -44,7 +44,7 @@ global PILF;
 global DEGR;
 
 %      Worm   Peanut
-REPL = [ 6.0   1.0];
+REPL = [ 7.0   1.0];
 PILF = [ 0.0   1.0];
 DEGR = [-5.0   1.0];
 
