@@ -91,9 +91,9 @@ pfc_eye = eye(PFC_SIZE);
 %w_pfc_to_pfc = zeros(PFC_SIZE);
 
 %%   8.1 WAS 0.2 0.2
-w_food_to_pfc = 0.26 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_food_to_pfc = 0.29 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_food = w_food_to_pfc';
-w_place_to_pfc = 0.26 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+w_place_to_pfc = 0.29 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
 w_pfc_to_place = w_place_to_pfc';
 
 global w_pfc_to_hpc;
@@ -184,7 +184,7 @@ global TRIAL_DIR;
 
 PLACE_SLOTS = zeros(PLACE_CELLS);
 
-PLACE_STR = 0.4;
+PLACE_STR = 0.5;
 
 side1 = 1*(rand(1, PLACE_CELLS) < PLACE_STR/2);
 side2 = 1*(rand(1, PLACE_CELLS) < PLACE_STR/2);
