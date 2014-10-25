@@ -20,7 +20,7 @@ FOOD_CELLS = 2;
 PLACE_CELLS = 14;
 
 EXT_CONNECT = .2;                   % Chance of connection = 20%
-INT_CONNECT = .01;
+INT_CONNECT = .1;
 
 global worm;
 global peanut;
@@ -98,7 +98,6 @@ w_pfc_to_place = w_place_to_pfc';
 
 global w_pfc_to_hpc;
 w_pfc_to_hpc = -.21 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
-
 global w_pfc_to_hpc_init;
 w_pfc_to_hpc_init = w_pfc_to_hpc;
 global w_pfc_to_hpc_prev
