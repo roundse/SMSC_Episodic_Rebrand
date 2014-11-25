@@ -1,14 +1,21 @@
-% switch where lesioning happens
-% take snap shots
-
 function jay_episodic(hpc_les, pfc_les)
 clear;
-close all;
-clc;
+% close all;
+% clc;
 
 global lesion_pfc;
 global lesion_hpc;
 global switch_lesion;
+
+global debug;
+debug = 0;
+
+global show_pfc_w;
+global show_hpc_w;
+
+global internal_weights;
+
+internal_weights = 0;
 
 % false -> lesion happens during during testing
 % true  -> lesion happens during training
@@ -17,47 +24,57 @@ switch_lesion = 1;
 lesion_pfc = 0;
 lesion_hpc = 0;
 
-global learning_rate;
-global INP_STR;
-global gain_oja;
+% pfc acts like a really good HPC with training turned on (and off)
+% will test HPC with training
+
+show_pfc_w = debug & ~lesion_pfc;
+show_hpc_w = debug & ~lesion_hpc;
+
+global learning_rate; %hpc
+global pfc_learning_rate;
+
+global INP_STR;  
 global cycles;
 
-global pfc_learning_rate;
+% global weight_reduction;
+% weight_reduction = 1;
+
+pfc_learning_rate = 0.08;
+learning_rate = 0.5;
 
 global pfc_max;
 global hpc_max;
-global max_max_weight;  
+global max_max_weight;
+global int_max_weight;
+int_max_weight = 2;
 
-pfc_max = 8;
+global decay;
+decay = 0.04;
+
+pfc_max = 2;
 hpc_max = 8;
-max_max_weight = 20;
+max_max_weight = 8;
 
-INP_STR = 2;
+INP_STR = .2;
 
-%started at 7:31!
-
-runs = 30;
-cycles = 14;
+runs = 15; 
+cycles = 12;
 
 global REPL;
 global PILF;
 global DEGR;
 
-%      Worm   Peanut
-REPL = [ 7.0   4.0];
-PILF = [ 0.0   4.0];
-DEGR = [-7.0   4.0];
-
-gain_oja = 0.7;
-pfc_learning_rate = .3;
-learning_rate = 0.71;
+REPL = [ 6.0   2.0];
+PILF = [ 0     2.0];
+DEGR = [-5.0   2.0];
+% TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos
 global DIR;
 global TRIAL_DIR;
 DIR = datestr(now);
 DIR = strrep(DIR,':',' ');
-DIR = horzcat('data-', DIR);
+DIR = horzcat('trials\data-', DIR);
 mkdir(DIR);
 
 pos = 0;
@@ -80,15 +97,16 @@ for e=1:1
     v = 1;
     while v  <= 3
         VALUE = v;
-        
         for i = 1:runs
             TRIAL_DIR = horzcat(DIR, '\', num2str(VALUE), '-', ...
                 num2str(VALUE), ';', num2str(i), '\');
             mkdir(TRIAL_DIR);
             init_val = VALUE;
                        
+            tic;
             [worm_trial, pean_trial] = ...
-                experiment(cycles, learning_rate, gain_oja, is_disp_weights, VALUE);
+                experiment(cycles, is_disp_weights, VALUE);
+            toc;
 
             worm_trials{i} = worm_trial;
             pean_trials{i} = pean_trial;
@@ -106,8 +124,8 @@ for e=1:1
             message = horzcat('trial ', num2str(i), ' complete');
             disp(message);
             
-            all_side_pref = [w_place_stats p_place_stats];
-            all_checks = [w_place_stats p_place_stats];
+            all_side_pref{v} = [w_place_stats p_place_stats];
+            all_checks{v} = [w_place_stats p_place_stats];
             
            save(trial_file_name, 'all_checks');
            save(pref_file_name, 'all_side_pref');
@@ -127,11 +145,13 @@ for e=1:1
         end
         
         p_place_stats
-        p_avg_side_preference(v) = mean(p_place_stats)
+        mean(p_place_stats)
+        p_avg_side_preference(v) = mean(p_place_stats);
         p_avg_pref_error(v) = std(p_place_stats)/ sqrt(length(p_place_stats));
         
         w_place_stats
-        w_avg_side_preference(v) = mean(w_place_stats)
+        mean(w_place_stats)
+        w_avg_side_preference(v) = mean(w_place_stats);
         w_avg_pref_error(v) = std(w_place_stats)/ sqrt(length(w_place_stats));
         
         value_groups{v} = [VALUE worm_trials pean_trials];

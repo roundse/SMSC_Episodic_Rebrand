@@ -8,6 +8,11 @@ global hpc_weight_queue;
 global HVAL;
 global HPC_SIZE;
 
+global hpc_learning;
+global run_hpc;
+
+global internal_weights;
+
 hpc_eye = eye(HPC_SIZE);
 
 queue_pos = length(hpc_in_queue)+1;
@@ -20,11 +25,18 @@ if nargin < 3
         total_inputs = total_inputs + temp_input;
     end
     
-    food_hpc_out = activity(hpc_in, hpc_eye, total_inputs, ...
-        w_hpc_to_hpc);
-    
-    returnable = food_hpc_out;
+    if internal_weights
+        hpc_out = activity(hpc_in, hpc_eye, total_inputs, w_hpc_to_hpc);
+    else
+        hpc_out = activity(hpc_in, hpc_eye, total_inputs,  0.* w_hpc_to_hpc);
+    end
 
+    returnable = hpc_out;
+ 
+    if hpc_learning & run_hpc & internal_weights
+        w_hpc_to_hpc = oja(hpc_out, hpc_in, w_hpc_to_hpc, HVAL);
+    end
+    
     for l = 1:length(w_hpc_to_hpc)
         w_hpc_to_hpc(l,l) = 0;
     end

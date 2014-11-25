@@ -53,12 +53,13 @@ else
     run_hpc = 1;
     run_pfc = 1;
 end
-hpc = zeros(cycles, HPC_SIZE);
-food = zeros(cycles, FOOD_CELLS);
-place_region = zeros(cycles, PLACE_CELLS);
+
+global place_side_inhibit;
+place_side_inhibit = food_stim;
 
 p_eye = eye(PLACE_CELLS);
 f_eye = eye(FOOD_CELLS);
+
 
 for j = 2:cycles
     if ~run_hpc
@@ -88,14 +89,13 @@ for j = 2:cycles
         cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
         cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
         cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
-        %cycle_hpc(hpc_out, w_hpc_to_hpc, hpc_out, value);
-        cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+%         decay_hpc();
     end
 
     if run_pfc
         cycle_pfc(pfc_out, w_place_to_pfc, place_out, value);
         cycle_pfc(pfc_out, w_food_to_pfc, food_out, value);
-        %cycle_pfc(pfc_out, w_pfc_to_pfc, pfc_out, value);
+        %cycle_pfc(pfc_out, w_pfc_to_hpc, hpc_out, value);
     end
   
     if run_pfc
@@ -110,15 +110,55 @@ for j = 2:cycles
                 pfc(j,:)}, is_learning);
 end
 
-final_place_activity = mean(place_region(6:cycles,:));
+pfc(1,:) = pfc(end,:);
+hpc(1,:) = hpc(end,:);
+food(1,:) = food(end,:);
+place_region(1,:) = place_region(end,:);
+
+final_place_activity = mean(place_region(3:cycles,:));
 hpc_cumul_activity = hpc_cumul_activity + mean(mean(hpc));
 pfc_cumul_activity = pfc_cumul_activity + mean(mean(pfc));
 
 global hpc_average;
 global pfc_average;
 
+global hpc_collected_activity;
+hpc_collected_activity = [hpc_collected_activity; mean(hpc)];
+
+global pfc_collected_activity;
+pfc_collected_activity = [pfc_collected_activity; mean(pfc)];
+
+global place_collected_activity;
+place_collected_activity = [place_collected_activity; mean(place_region)];
+
+global food_collected_activity;
+food_collected_activity = [food_collected_activity; mean(food)];
+
 hpc_average = hpc_average + mean(hpc);
 pfc_average = pfc_average + mean(pfc);
 
 place_activity = final_place_activity;
+end
+
+function decay_hpc()
+
+    global w_hpc_to_place;
+    global w_hpc_to_food;
+    global w_place_to_hpc;
+    global w_food_to_hpc;
+
+    decay_weights(w_hpc_to_place);
+    decay_weights(w_hpc_to_food);
+    decay_weights(w_place_to_hpc);
+    decay_weights(w_food_to_hpc);
+
+end
+
+function w = decay_weights(w)
+
+    global decay;
+    half_d = decay/2;
+    wd = half_d*rand(size(w)) - half_d;
+    w = w + wd;
+
 end

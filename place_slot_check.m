@@ -2,6 +2,10 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     global PLACE_SLOTS;
     global PLACE_CELLS;
     global cycles;
+    global debug;
+    
+    global IS_CHECKING;
+    IS_CHECKING = 1;
     
     global FOODED_SLOTS;
     FOODED_SLOTS = PLACE_SLOTS;
@@ -14,12 +18,17 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     % continue trial until no inputs left
     % the "Battle Royale" of inputs! 14 INPUTS ENTER. ONE ME LEAVES.
 
-    testing_trials = 6;
+    testing_trials = 6; 
 
     ranked_slots = zeros(PLACE_CELLS, 1);
+    min_vars = zeros(PLACE_CELLS, 1);
 
     % food is retrieved from store
-    neutral_input = sum(PLACE_SLOTS);
+    neutral_input = ones(1,14);
+
+    global stored_place_responses;
+    stored_place_responses = place_norm_activity();
+
     %injection_current = rand(1,14); % <-- used for forgetting
     for p = 1:PLACE_CELLS
         injection_current = neutral_input/(15-p) +(rand(1,14) - 0.5 ); % <-- used for the eleminating input model
@@ -29,16 +38,20 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
         save_state(p);
 
         avg = final_place_activity;
-        [slot_signal ranked_slots(p)] = find_place(avg); % <-- used for the eleminating input model
-        neutral_input = neutral_input - slot_signal; % <-- used for the eleminating input model
+        [slot_signal ranked_slots(p) min_vars(p)] = find_place(avg); % <-- used for the eleminating input model
+%         neutral_input = neutral_input - slot_signal; % <-- used for the eleminating input model
         % cycle_net(slot_signal, [0 0], cycles, -1); % <-- used forgetting
         %model
     end
 
-    disp(ranked_slots);
+%     disp(ranked_slots);
     checked_places = ranked_slots;
     side_pref = side_pref_calc(ranked_slots);
     avg_checks = ranked_slots';
+
+    if debug
+        rank_and_variance = [ranked_slots min_vars]
+    end
     
     first_checked = avg_checks(1)<8;
 
@@ -48,23 +61,45 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
 % drawnow;
 end
 
-function [slot_signal slot] = find_place(place_response)
-    global FOODED_SLOTS;
+function place_outputs = place_norm_activity ()
     global PLACE_CELLS;
+    global cycles;    
+    global HVAL;
+    global place;
+    global IS_CHECKING;
+    global FOODED_SLOTS;
+    
+    IS_CHECKING = 1;
+    HVAL = 0;
+    
+    place_outputs = zeros(PLACE_CELLS);
+
+    for p = 1:PLACE_CELLS
+        injection_current = FOODED_SLOTS(p,:);
+        
+        place_outputs(p,:) = cycle_net(injection_current, place(p,:), cycles, 0); % <-- used forgetting
+    end
+    
+end
+
+function [slot_signal slot min_var] = find_place(place_response)
+    global PLACE_CELLS;
+    global stored_place_responses;
     
     vars = zeros(PLACE_CELLS,1);
 
-    for i = 1:length(FOODED_SLOTS);
-        vars(i) = sum(var([FOODED_SLOTS(i,:); ...
+    for i = 1:length(stored_place_responses);
+        vars(i) = sum(var([stored_place_responses(i,:); ...
             place_response]));
     end
        
+    min_var = min(vars);
     slot = find(vars==min(vars));
     slot = slot(1); % in the unlikely (but still occuring) event there are multiple minimums, just take the first
-    slot_signal = FOODED_SLOTS(slot, :);
+    slot_signal = stored_place_responses(slot, :);
     a = -2*ones(1,14);
-    fs = FOODED_SLOTS(slot,:);
-    FOODED_SLOTS(slot,:) = FOODED_SLOTS(slot,:)*0 - 35;
+    fs = stored_place_responses(slot,:);
+    stored_place_responses(slot,:) = stored_place_responses(slot,:)*0 - 35;
 end
 
 function side_pref = side_pref_calc (ranked_slots)

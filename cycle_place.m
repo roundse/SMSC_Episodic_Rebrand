@@ -21,6 +21,8 @@ function returnable = cycle_place(place_in, input_weights, input)
     global is_pfc;
     decay = .004;
 
+    global place_side_inhibit;
+    
     global run_hpc;
     global run_pfc;
 
@@ -39,6 +41,13 @@ function returnable = cycle_place(place_in, input_weights, input)
 
         for i = 1:(queue_pos-1)
             total_inputs = total_inputs + place_in_queue{i} * place_weight_queue{i};
+        end
+        
+%         place side inhibit
+        len = length(total_inputs);
+        for p=1:len
+            total_inputs(p) = total_inputs(p) + ...
+                             ((total_inputs(p) - sum(total_inputs)) / len);
         end
 
         place_out = activity(place_in, place_eye, total_inputs, ...
