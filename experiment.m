@@ -16,7 +16,7 @@ initialize_weights(cycles, is_disp_weights, VALUE);
 run_protocol('pre_training', cycles, is_disp_weights, VALUE);
 
 %
-run_protocol('training', cycles, is_disp_weights, VALUE);
+%run_protocol('training', cycles, is_disp_weights, VALUE);
 % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
 % save(filename);
 
@@ -655,9 +655,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     global w_hpc_to_hpc;
     w_hpc_to_hpc = 0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.01 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.08 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = -w_food_to_hpc';
-    w_place_to_hpc = 0.01 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.08 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = -w_place_to_hpc';
 
     global w_hpc_to_place_init;
