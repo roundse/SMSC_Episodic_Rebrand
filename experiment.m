@@ -81,11 +81,11 @@ global IS_CHECKING;
 global VAL_PAIR;
 global ACT_VAL;
     
-if VALUE == 2
+if VALUE == 1
     value = REPL;
     disp('REPLENISH TRIAL~~~~~~~~~~~~~~~~~~~~~~~~');
     
-elseif VALUE == 1
+elseif VALUE == 2
     value = DEGR;
     disp('DEGRADE TRIAL~~~~~~~~~~~~~~~~~~~~~~~~~~');
 
@@ -272,9 +272,9 @@ for j=1:duration
         % TURN THIS ON/OF FOR LEARNING DURING TESTING/TRAINING
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         hpc_learning = 1;
-        pfc_learning = 1;
+        pfc_learning = 0;
         if ~is_testing
-            pfc_learning = 0;
+            pfc_learning = 1;
             hpc_learning = 1;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -602,9 +602,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     %w_pfc_to_pfc = zeros(PFC_SIZE);
 
     %%   was 0.55
-    w_food_to_pfc = 0.02 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.12 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = -w_food_to_pfc';
-    w_place_to_pfc = 0.02 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.12 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = -w_place_to_pfc';
 
     global w_pfc_to_hpc;

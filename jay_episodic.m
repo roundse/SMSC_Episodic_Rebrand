@@ -39,8 +39,8 @@ global cycles;
 % global weight_reduction;
 % weight_reduction = 1;
 
-pfc_learning_rate = 0.08;
-learning_rate = 0.37;
+pfc_learning_rate = 0.5;
+learning_rate = 0.5;
 
 global pfc_max;
 global hpc_max;
@@ -49,7 +49,7 @@ global int_max_weight;
 int_max_weight = 2;
 
 global decay;
-decay = 0.0009;
+decay = 0.05;
 
 pfc_max = 2;
 hpc_max = 8;
@@ -64,7 +64,7 @@ global REPL;
 global PILF;
 global DEGR;
 
-REPL = [ 5.0   1.0];
+REPL = [ 6.0   1.0];
 PILF = [ 0     1.0];
 DEGR = [-5.0   1.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
