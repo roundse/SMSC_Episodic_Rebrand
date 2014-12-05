@@ -115,7 +115,7 @@ hpc(1,:) = hpc(end,:);
 food(1,:) = food(end,:);
 place_region(1,:) = place_region(end,:);
 
-final_place_activity = mean(place_region(3:cycles,:));
+final_place_activity = mean(place_region(6:cycles,:));
 hpc_cumul_activity = hpc_cumul_activity + mean(mean(hpc));
 pfc_cumul_activity = pfc_cumul_activity + mean(mean(pfc));
 
