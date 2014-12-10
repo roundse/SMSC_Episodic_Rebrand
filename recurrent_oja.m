@@ -48,7 +48,7 @@ for k = 1:K
     i = I(k);
 
     delta_wx = eta*y(j) * (x(i) - y_wx(i));
-    wx(j,i) = (wx(j,i) + value*delta_wx);
+    wx(j,i) = (wx(j,i) + delta_wx);
 end
 
 % input weights

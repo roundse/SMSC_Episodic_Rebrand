@@ -23,7 +23,7 @@ run_protocol('pre_training', cycles, is_disp_weights, VALUE);
 %%%%%%%%%%%%%%%%%%%%%%
 % Don't give it training, Emily, no matter how you may want to
 %%%%%%%%%%%%%%%%%%%%%%
-run_protocol('training', cycles, is_disp_weights, VALUE);
+%run_protocol('training', cycles, is_disp_weights, VALUE);
 % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
 % save(filename);
 
@@ -58,12 +58,20 @@ global d_prefs_avg;
 global r_prefs;
 global d_prefs;
 
-if debug_sides
-    r_pfc_lesion_prefs_avg(end+1,:) = r_pfc_lesion_prefs;
-    r_hpc_lesion_prefs_avg(end+1,:) = r_hpc_lesion_prefs;
+global lesion_pfc;
+global lesion_hpc;
 
-    d_pfc_lesion_prefs_avg(end+1,:) = d_pfc_lesion_prefs;
-    d_hpc_lesion_prefs_avg(end+1,:) = d_hpc_lesion_prefs;
+if debug_sides
+    
+    if ~lesion_pfc
+        r_pfc_lesion_prefs_avg(end+1,:) = r_pfc_lesion_prefs;
+        d_pfc_lesion_prefs_avg(end+1,:) = d_pfc_lesion_prefs;
+    end
+
+    if ~lesion_hpc
+        r_hpc_lesion_prefs_avg(end+1,:) = r_hpc_lesion_prefs;
+        d_hpc_lesion_prefs_avg(end+1,:) = d_hpc_lesion_prefs;
+    end
     
     r_prefs_avg(end+1,:) = r_prefs;
     d_prefs_avg(end+1,:) = d_prefs;
@@ -196,6 +204,9 @@ global pfc;
 
 global is_replenish;
 
+global is_consolidation;
+is_consolidation = 0;
+
 hpc_average = hpc(1,:);
 pfc_average = pfc(1,:);
 
@@ -322,6 +333,7 @@ for j=1:duration
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
+        is_consolidation = 1;
         for q = 1:current_time
             
             if is_testing || is_training
@@ -353,10 +365,11 @@ for j=1:duration
                 %                   end
                 cycle_net( PLACE_SLOTS(i,:)*loc_inject, place(i,:)*loc_inject, cycles, 0);
             end
-            loc_inject = 1;
+            loc_inject = 0;
         end
         hpc_learning = 0;
         pfc_learning = 0;
+        is_consolidation = 0;
         
         global w_hpc_to_hpc;
 
@@ -573,9 +586,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 175;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 225;
+    PFC_SIZE = 200;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
@@ -583,8 +596,8 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.08;                   % Chance of connection = 20%
-    INT_CONNECT = 0.05;
+    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
+    INT_CONNECT = 0.04;
 
     global worm;
     global peanut;
@@ -670,10 +683,10 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     %w_pfc_to_pfc = zeros(PFC_SIZE);
 
     %%   was 0.55
-    w_food_to_pfc = 0.05 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
-    w_pfc_to_food = -w_food_to_pfc';
-    w_place_to_pfc = 0.05 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
-    w_pfc_to_place = -w_place_to_pfc';
+    w_food_to_pfc = 0.2 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_pfc_to_food = w_food_to_pfc';
+    w_place_to_pfc = 0.2 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
     % w_pfc_to_hpc = 0.55 .* ones(PFC_SIZE, HPC_SIZE);
@@ -683,7 +696,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.05 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
@@ -721,12 +734,12 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.05 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.05 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
-    w_hpc_to_food = -w_food_to_hpc';
-    w_place_to_hpc = 0.05 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
-    w_hpc_to_place = -w_place_to_hpc';
+    w_food_to_hpc = 0.2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_hpc_to_food = w_food_to_hpc';
+    w_place_to_hpc = 0.2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
     global w_place_to_hpc_init;

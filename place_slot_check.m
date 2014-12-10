@@ -10,6 +10,8 @@ function [checked_places, side_pref, avg_checks, first_checked] = place_slot_che
     global d_prefs;
     global worm;
     
+    global lesion_pfc;
+    global lesion_hpc;
     
     global hpc_learning;
     global pfc_learning;
@@ -21,24 +23,29 @@ function [checked_places, side_pref, avg_checks, first_checked] = place_slot_che
     stored_place_responses = place_norm_activity();
     
     if debug_sides
-        [checked_places, side_pref, avg_checks, first_checked] = ...
-            run_side_checks('hpc');
         
-        if last_side == worm
-            r_hpc_lesion_prefs(end+1) = side_pref;
-        else
-            d_hpc_lesion_prefs(end+1) = side_pref;
-        end
-        
-        [checked_places, side_pref, avg_checks, first_checked] = ...
-            run_side_checks('pfc');
+        if ~lesion_hpc
+            [checked_places, side_pref, avg_checks, first_checked] = ...
+                run_side_checks('hpc');
 
-        if last_side == worm
-            r_pfc_lesion_prefs(end+1) = side_pref;
-        else
-            d_pfc_lesion_prefs(end+1) = side_pref;
+            if last_side == worm
+                r_hpc_lesion_prefs(end+1) = side_pref;
+            else
+                d_hpc_lesion_prefs(end+1) = side_pref;
+            end        
         end
         
+        if ~lesion_pfc
+            [checked_places, side_pref, avg_checks, first_checked] = ...
+                run_side_checks('pfc');
+
+            if last_side == worm
+                r_pfc_lesion_prefs(end+1) = side_pref;
+            else
+                d_pfc_lesion_prefs(end+1) = side_pref;
+            end
+        end
+            
         [checked_places, side_pref, avg_checks, first_checked] = ...
             run_side_checks('');
 
@@ -62,6 +69,9 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     global debug;
     global lesion_pfc;
     global lesion_hpc;
+    
+    lesion_pfc_init = lesion_pfc;
+    lesion_hpc_init = lesion_hpc;
     
     global IS_CHECKING;
     IS_CHECKING = 1;
@@ -121,8 +131,8 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     
     first_checked = avg_checks(1)<8;
 
-    lesion_hpc = 0;
-    lesion_pfc = 0;
+    lesion_pfc = lesion_pfc_init;
+    lesion_hpc = lesion_hpc_init;
 
 end
 

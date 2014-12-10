@@ -32,7 +32,6 @@ global decay;
 global INP_STR;  
 global cycles;
 global learning_reduction;
-
 global activity_fig;
 
 figure;
@@ -43,14 +42,14 @@ drawnow;
 % false -> lesion happens during during testing
 % true  -> lesion happens during training
 % common vars
-internal_weights = 0;
-decay = 0.011;
+internal_weights = 1;
+decay = 0.02;
 
-pfc_learning_rate = 0.1;
-learning_rate = 0.405;
+pfc_learning_rate = 0.15;
+learning_rate = 0.3;
 
 learning_reduction = 1;
-cycles = 10;
+cycles = 15; % lower cycles appeared to make it more random.
 
 % lesions
 switch_lesion = 1;
@@ -66,7 +65,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 15;
+runs = 10;
 
 % global weight_reduction;
 % weight_reduction = 1;
