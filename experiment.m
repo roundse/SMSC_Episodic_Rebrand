@@ -322,8 +322,8 @@ for j=1:duration
         % TURN THIS ON/OF FOR LEARNING DURING TESTING/TRAINING
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if is_testing
-            pfc_learning = 1;
-            hpc_learning = 1;
+            pfc_learning = 0;
+            hpc_learning = 0;
         end
 
         hpc_learning = 1;
@@ -685,9 +685,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     global init_weight;
 
     %%   was 0.55
-    w_food_to_pfc = init_weight .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = init_weight .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -698,7 +698,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.05 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
@@ -736,12 +736,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    global int_init_w;
-    w_hpc_to_hpc = int_init_w .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.1 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = init_weight .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = init_weight .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;

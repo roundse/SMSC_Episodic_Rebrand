@@ -33,8 +33,8 @@ global INP_STR;
 global cycles;
 global learning_reduction;
 global activity_fig;
-global init_weight;
-global int_init_w;
+% global init_weight;
+% global int_init_w;
 
 figure;
 title('Network Acivity');
@@ -44,14 +44,14 @@ drawnow;
 % false -> lesion happens during during testing
 % true  -> lesion happens during training
 % common vars
-init_weight = 0.05;
-int_init_w = 0.05;
+% init_weight = 0.05;
+% int_init_w = 0.05;
 
-internal_weights = 0;
+internal_weights = 1;
 decay = 0.01;
 
-pfc_learning_rate = 0.1;
-learning_rate = 0.4;
+pfc_learning_rate = .2;
+learning_rate = 0.6;
 
 learning_reduction = 1;
 cycles = 10; % lower cycles appeared to make it more random.
@@ -70,7 +70,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 1;
+runs = 15;
 
 % global weight_reduction;
 % weight_reduction = 1;
@@ -85,7 +85,7 @@ global max_max_weight;
 global int_max_weight;
 int_max_weight = 2;
 
-pfc_max = 2;
+pfc_max = 4;
 hpc_max = 8;
 max_max_weight = 8;
 
