@@ -1,15 +1,94 @@
-function [checked_places side_pref avg_checks first_checked] = place_slot_check()
+function [checked_places, side_pref, avg_checks, first_checked] = place_slot_check()
+    global debug_sides;
+    global last_side;
+    
+    global r_pfc_lesion_prefs;
+    global r_hpc_lesion_prefs;
+    global d_pfc_lesion_prefs;
+    global d_hpc_lesion_prefs;
+    global r_prefs;
+    global d_prefs;
+    global worm;
+    
+    global lesion_pfc;
+    global lesion_hpc;
+    
+    global hpc_learning;
+    global pfc_learning;
+    
+    hpc_learning = 0;
+    pfc_learning = 0;
+    
+    global stored_place_responses;
+    stored_place_responses = place_norm_activity();
+    
+    if debug_sides
+        
+        if ~lesion_hpc
+            [checked_places, side_pref, avg_checks, first_checked] = ...
+                run_side_checks('hpc');
+
+            if last_side == worm
+                r_hpc_lesion_prefs(end+1) = side_pref;
+            else
+                d_hpc_lesion_prefs(end+1) = side_pref;
+            end        
+        end
+        
+        if ~lesion_pfc
+            [checked_places, side_pref, avg_checks, first_checked] = ...
+                run_side_checks('pfc');
+
+            if last_side == worm
+                r_pfc_lesion_prefs(end+1) = side_pref;
+            else
+                d_pfc_lesion_prefs(end+1) = side_pref;
+            end
+        end
+            
+        [checked_places, side_pref, avg_checks, first_checked] = ...
+            run_side_checks('');
+
+        if last_side == worm
+            r_prefs(end+1) = side_pref;
+        else
+            d_prefs(end+1) = side_pref;
+        end
+    else
+        [checked_places, side_pref, avg_checks, first_checked] = ...
+            run_side_checks('');
+    end
+
+end
+
+function [checked_places, side_pref, avg_checks, first_checked] = run_side_checks(lesion)
+
     global PLACE_SLOTS;
     global PLACE_CELLS;
     global cycles;
     global debug;
+    global lesion_pfc;
+    global lesion_hpc;
+    
+    lesion_pfc_init = lesion_pfc;
+    lesion_hpc_init = lesion_hpc;
     
     global IS_CHECKING;
     IS_CHECKING = 1;
     
     global FOODED_SLOTS;
     FOODED_SLOTS = PLACE_SLOTS;
-
+    
+    if strcmp(lesion,'hpc')
+        lesion_hpc = 1;
+        msg = 'only pfc | ';
+    elseif strcmp(lesion,'pfc')
+        lesion_pfc = 1;
+        msg = 'only hpc | ';
+    else
+        msg = '';
+    end
+    
     % make variable place input with all inputs
     % inject into net for a cycle
     % collect place response
@@ -25,9 +104,6 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
 
     % food is retrieved from store
     neutral_input = ones(1,14);
-
-    global stored_place_responses;
-    stored_place_responses = place_norm_activity();
 
     %injection_current = rand(1,14); % <-- used for forgetting
     for p = 1:PLACE_CELLS
@@ -46,7 +122,7 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
 
 %     disp(ranked_slots);
     checked_places = ranked_slots;
-    side_pref = side_pref_calc(ranked_slots);
+    side_pref = side_pref_calc(ranked_slots, msg);
     avg_checks = ranked_slots';
 
     if debug
@@ -55,10 +131,9 @@ function [checked_places side_pref avg_checks first_checked] = place_slot_check(
     
     first_checked = avg_checks(1)<8;
 
-% figure;
-% title('Place dist');
-% plot(avg_checks);
-% drawnow;
+    lesion_pfc = lesion_pfc_init;
+    lesion_hpc = lesion_hpc_init;
+
 end
 
 function place_outputs = place_norm_activity ()
@@ -67,18 +142,25 @@ function place_outputs = place_norm_activity ()
     global HVAL;
     global place;
     global IS_CHECKING;
-    global FOODED_SLOTS;
+    global PLACE_SLOTS;
     
     IS_CHECKING = 1;
     HVAL = 0;
     
+    runs = 4;
+    
     place_outputs = zeros(PLACE_CELLS);
 
-    for p = 1:PLACE_CELLS
-        injection_current = FOODED_SLOTS(p,:);
-        
-        place_outputs(p,:) = cycle_net(injection_current, place(p,:), cycles, 0); % <-- used forgetting
+    for i = 1:runs
+        for p = 1:PLACE_CELLS
+            injection_current = PLACE_SLOTS(p,:);
+
+            place_outputs(p,:) = place_outputs(p,:) + ...
+                cycle_net(injection_current, place(p,:), cycles, 0);
+        end
     end
+    
+    place_outputs = place_outputs ./ runs;
     
 end
 
@@ -102,13 +184,13 @@ function [slot_signal slot min_var] = find_place(place_response)
     stored_place_responses(slot,:) = stored_place_responses(slot,:)*0 - 35;
 end
 
-function side_pref = side_pref_calc (ranked_slots)
+function side_pref = side_pref_calc (ranked_slots, msg)
     global PLACE_CELLS;
     
     first_side = zeros(PLACE_CELLS,1);
     first_side(ranked_slots<8) = 1;
  
     side_pref = sum(first_side(1:7));
-    disp('Worms in first seven checks: ');
+    disp(horzcat(msg,'Worms in first seven checks: '));
     disp(side_pref);
 end

@@ -54,6 +54,8 @@ else
     run_pfc = 1;
 end
 
+global is_consolidation;
+
 global place_side_inhibit;
 place_side_inhibit = food_stim;
 
@@ -88,14 +90,23 @@ for j = 2:cycles
     if run_hpc
         cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
         cycle_hpc(hpc_out, w_food_to_hpc, food_out, value);
-        cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
+    
+        if is_consolidation
+            cycle_hpc(hpc_out, w_place_to_hpc, place_stim, value);
+            cycle_hpc(hpc_out, w_food_to_hpc, food_stim, value);
+        end
+
 %         decay_hpc();
     end
 
     if run_pfc
         cycle_pfc(pfc_out, w_place_to_pfc, place_out, value);
         cycle_pfc(pfc_out, w_food_to_pfc, food_out, value);
-        %cycle_pfc(pfc_out, w_pfc_to_hpc, hpc_out, value);
+
+        if is_consolidation
+            cycle_pfc(pfc_out, w_place_to_pfc, place_stim, value);
+            cycle_pfc(pfc_out, w_food_to_pfc, food_stim, value);
+        end
     end
   
     if run_pfc
@@ -115,7 +126,7 @@ hpc(1,:) = hpc(end,:);
 food(1,:) = food(end,:);
 place_region(1,:) = place_region(end,:);
 
-final_place_activity = mean(place_region(3:cycles,:));
+final_place_activity = mean(place_region(6:cycles,:));
 hpc_cumul_activity = hpc_cumul_activity + mean(mean(hpc));
 pfc_cumul_activity = pfc_cumul_activity + mean(mean(pfc));
 

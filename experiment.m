@@ -4,6 +4,12 @@ global TRIAL_DIR;
 global GAIN;
 GAIN = 5;
 
+% to do
+% - store lesion prefs based on peanut / worm
+% - display at end of trial or store
+% - find useful way to relate to activity?
+% - work on having them be consistent and in right direction.
+
 initialize_weights(cycles, is_disp_weights, VALUE);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,8 +20,9 @@ initialize_weights(cycles, is_disp_weights, VALUE);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 run_protocol('pre_training', cycles, is_disp_weights, VALUE);
-
-%
+%%%%%%%%%%%%%%%%%%%%%%
+% Don't give it training, Emily, no matter how you may want to
+%%%%%%%%%%%%%%%%%%%%%%
 %run_protocol('training', cycles, is_disp_weights, VALUE);
 % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
 % save(filename);
@@ -35,6 +42,40 @@ run_protocol('pre_training', cycles, is_disp_weights, VALUE);
 
 % show_weights('after testing',1);
 
+global debug_sides;
+global r_pfc_lesion_prefs_avg;
+global r_hpc_lesion_prefs_avg;
+global d_pfc_lesion_prefs_avg;
+global d_hpc_lesion_prefs_avg;
+
+global r_pfc_lesion_prefs;
+global r_hpc_lesion_prefs;
+global d_pfc_lesion_prefs;
+global d_hpc_lesion_prefs;
+
+global r_prefs_avg;
+global d_prefs_avg;
+global r_prefs;
+global d_prefs;
+
+global lesion_pfc;
+global lesion_hpc;
+
+if debug_sides
+    
+    if ~lesion_pfc
+        r_pfc_lesion_prefs_avg(end+1,:) = r_pfc_lesion_prefs;
+        d_pfc_lesion_prefs_avg(end+1,:) = d_pfc_lesion_prefs;
+    end
+
+    if ~lesion_hpc
+        r_hpc_lesion_prefs_avg(end+1,:) = r_hpc_lesion_prefs;
+        d_hpc_lesion_prefs_avg(end+1,:) = d_hpc_lesion_prefs;
+    end
+    
+    r_prefs_avg(end+1,:) = r_prefs;
+    d_prefs_avg(end+1,:) = d_prefs;
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SAVING VARIABLES
@@ -75,6 +116,8 @@ global peanut; global PEANUT;
 
 global REPL; global PILF; global DEGR;
 
+global learning_reduction;
+        
 global PVAL;
 global HVAL;
 global IS_CHECKING;
@@ -133,6 +176,8 @@ time_order = randperm(2);
 global is_testing;
 global is_training;
 
+global last_side;
+
 is_testing = strcmp(prot_type, 'testing');
 is_training = strcmp(prot_type, 'training');
 
@@ -156,6 +201,11 @@ global pfc_average;
 
 global hpc;
 global pfc;
+
+global is_replenish;
+
+global is_consolidation;
+is_consolidation = 0;
 
 hpc_average = hpc(1,:);
 pfc_average = pfc(1,:);
@@ -271,17 +321,19 @@ for j=1:duration
         
         % TURN THIS ON/OF FOR LEARNING DURING TESTING/TRAINING
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if is_testing
+            pfc_learning = 1;
+            hpc_learning = 1;
+        end
+
         hpc_learning = 1;
         pfc_learning = 1;
-        if ~is_testing
-            pfc_learning = 0;
-            hpc_learning = 0;
-        end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
+        is_consolidation = 1;
         for q = 1:current_time
             
             if is_testing || is_training
@@ -313,10 +365,11 @@ for j=1:duration
                 %                   end
                 cycle_net( PLACE_SLOTS(i,:)*loc_inject, place(i,:)*loc_inject, cycles, 0);
             end
-            loc_inject = 1;
+            loc_inject = 0;
         end
         hpc_learning = 0;
         pfc_learning = 0;
+        is_consolidation = 0;
         
         global w_hpc_to_hpc;
 
@@ -341,7 +394,9 @@ for j=1:duration
         %disp(['PFC Consolidate: ', num2str(activity2)]);
         hpc_cur_decay = 0;
         
-        if ~is_testing && ~is_training
+        last_side = current_type;
+        
+        if ~is_testing && ~is_training % this means pre-training
             pfc_learning = 1;
             hpc_learning = 1;
             PVAL = v;
@@ -354,8 +409,14 @@ for j=1:duration
             reward_stim(value, cycles, is_replenish);
         end
     end
+
+    global decay;
     
-    if is_testing || is_training
+    pfc_learning_rate = pfc_learning_rate * learning_reduction;
+    learning_rate = learning_rate * learning_reduction;
+    decay = decay * learning_reduction;
+
+    if is_testing || is_training % i.e everything but pre-training
         food_types = [food_types(2) food_types(1)];
         
         if is_training
@@ -465,7 +526,7 @@ if ~is_testing
     VAL_PAIR = val;
     ACT_VAL = 1 / (1 + value(1) + value(2));
 
-    for q = 1:2
+    for q = 1:1
         % jay considers input given
         spots = spot_shuffler(14);
         
@@ -491,6 +552,9 @@ if ~is_testing
     
 end
 
+global activity_fig;
+
+figure(activity_fig); %sets current figure to prevent overwriting or ludicrous output
 global hpc_collected_activity;
 subplot(4,1,1);
 imagesc(hpc_collected_activity');
@@ -510,6 +574,7 @@ global food_collected_activity;
 subplot(4,1,4);
 imagesc(food_collected_activity');
 colorbar;
+activity_fig = gcf;
 drawnow;
 
 % if is_testing
@@ -517,7 +582,6 @@ drawnow;
 % end
 
 end
-
 
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
@@ -532,8 +596,8 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.15;                   % Chance of connection = 20%
-    INT_CONNECT = 0.05;
+    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
+    INT_CONNECT = 0.04;
 
     global worm;
     global peanut;
@@ -545,6 +609,23 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     WORM =  [-1,  1];
     PEANUT =[ 1, -1];
 
+    global r_pfc_lesion_prefs;
+    global r_hpc_lesion_prefs;
+    global d_pfc_lesion_prefs;
+    global d_hpc_lesion_prefs;
+    
+    global r_prefs;
+    global d_prefs;
+
+    r_pfc_lesion_prefs = [];
+    r_hpc_lesion_prefs = [];
+
+    d_pfc_lesion_prefs = [];
+    d_hpc_lesion_prefs = [];
+    
+    d_prefs = [];
+    r_prefs = [];
+    
     global place;
     place = zeros(length(PEANUT), PLACE_CELLS);
 
@@ -600,12 +681,14 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     pfc_eye = eye(PFC_SIZE);
     %w_pfc_to_pfc = zeros(PFC_SIZE);
+    
+    global init_weight;
 
     %%   was 0.55
-    w_food_to_pfc = 0.02 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
-    w_pfc_to_food = -w_food_to_pfc';
-    w_place_to_pfc = 0.02 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
-    w_pfc_to_place = -w_place_to_pfc';
+    w_food_to_pfc = init_weight .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_pfc_to_food = w_food_to_pfc';
+    w_place_to_pfc = init_weight .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
     % w_pfc_to_hpc = 0.55 .* ones(PFC_SIZE, HPC_SIZE);
@@ -653,12 +736,13 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    global int_init_w;
+    w_hpc_to_hpc = int_init_w .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.08 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
-    w_hpc_to_food = -w_food_to_hpc';
-    w_place_to_hpc = 0.08 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
-    w_hpc_to_place = -w_place_to_hpc';
+    w_food_to_hpc = init_weight .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_hpc_to_food = w_food_to_hpc';
+    w_place_to_hpc = init_weight .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
     global w_place_to_hpc_init;

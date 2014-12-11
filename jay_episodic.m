@@ -3,44 +3,81 @@ clear;
 % close all;
 % clc;
 
+global r_pfc_lesion_prefs_avg;
+global r_hpc_lesion_prefs_avg;
+global d_pfc_lesion_prefs_avg;
+global d_hpc_lesion_prefs_avg;
+global r_prefs_avg;
+global d_prefs_avg;
+
+r_pfc_lesion_prefs_avg = [];
+r_hpc_lesion_prefs_avg = [];
+r_prefs_avg = [];
+
+d_pfc_lesion_prefs_avg = [];
+d_hpc_lesion_prefs_avg = [];
+d_prefs_avg = [];
+
 global lesion_pfc;
 global lesion_hpc;
 global switch_lesion;
-
+global debug_sides;
 global debug;
-debug = 0;
-
 global show_pfc_w;
 global show_hpc_w;
-
 global internal_weights;
+global learning_rate; %hpc
+global pfc_learning_rate;
+global decay;
+global INP_STR;  
+global cycles;
+global learning_reduction;
+global activity_fig;
+global init_weight;
+global int_init_w;
 
-internal_weights = 0;
+figure;
+title('Network Acivity');
+activity_fig = gcf;
+drawnow;
 
 % false -> lesion happens during during testing
 % true  -> lesion happens during training
+% common vars
+init_weight = 0.05;
+int_init_w = 0.05;
+
+internal_weights = 0;
+decay = 0.01;
+
+pfc_learning_rate = 0.1;
+learning_rate = 0.4;
+
+learning_reduction = 1;
+cycles = 10; % lower cycles appeared to make it more random.
+
+% lesions
 switch_lesion = 1;
 
 lesion_pfc = 0;
 lesion_hpc = 0;
 
-% pfc acts like a really good HPC with training turned on (and off)
-% will test HPC with training
+% debugs
+debug = 0;
+debug_sides = 0;
 
 show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
-global learning_rate; %hpc
-global pfc_learning_rate;
-
-global INP_STR;  
-global cycles;
+% number of tests
+runs = 1;
 
 % global weight_reduction;
 % weight_reduction = 1;
 
-pfc_learning_rate = 0.08;
-learning_rate = 0.37;
+INIT_pfc_learning_rate = pfc_learning_rate;
+INIT_learning_rate = learning_rate;
+INIT_decay = decay;
 
 global pfc_max;
 global hpc_max;
@@ -48,25 +85,19 @@ global max_max_weight;
 global int_max_weight;
 int_max_weight = 2;
 
-global decay;
-decay = 0.0009;
-
 pfc_max = 2;
 hpc_max = 8;
 max_max_weight = 8;
 
-INP_STR = .2;
-
-runs = 35; 
-cycles = 12;
+INP_STR = 0.2;
 
 global REPL;
 global PILF;
 global DEGR;
 
-REPL = [ 5.0   1.0];
-PILF = [ 0     1.0];
-DEGR = [-5.0   1.0];
+REPL = [ 5.0   2.0];
+PILF = [ 0     2.0];
+DEGR = [-5.0   2.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos
@@ -102,6 +133,10 @@ for e=1:1
                 num2str(VALUE), ';', num2str(i), '\');
             mkdir(TRIAL_DIR);
             init_val = VALUE;
+            
+            pfc_learning_rate = INIT_pfc_learning_rate;
+            learning_rate = INIT_learning_rate;
+            decay = INIT_decay;
                        
             tic;
             [worm_trial, pean_trial] = ...
@@ -130,6 +165,10 @@ for e=1:1
            save(trial_file_name, 'all_checks');
            save(pref_file_name, 'all_side_pref');
             
+        end
+        
+        if debug_sides
+            display_lesioned_side_preferences(DIR, VALUE);
         end
         
         if sum(p_first_checkeds) == 0
@@ -169,6 +208,58 @@ for e=1:1
 end
 
 save(filename, 'multi_groups');
+end
+
+function display_lesioned_side_preferences(dir, val)
+
+    global r_pfc_lesion_prefs_avg; 
+    global r_hpc_lesion_prefs_avg;
+    global d_pfc_lesion_prefs_avg;
+    global d_hpc_lesion_prefs_avg;
+    global r_prefs_avg;
+    global d_prefs_avg;
+
+    r_pfc_les_avg = mean(r_pfc_lesion_prefs_avg);
+    r_hpc_les_avg = mean(r_hpc_lesion_prefs_avg);
+    r_avg = mean(r_prefs_avg);
+    
+    rs = [r_pfc_les_avg; r_hpc_les_avg; r_avg]';
+    
+    d_pfc_les_avg = mean(d_pfc_lesion_prefs_avg);
+    d_hpc_les_avg = mean(d_hpc_lesion_prefs_avg);
+    d_avg = mean(d_prefs_avg);
+    
+    ds = [d_pfc_les_avg; d_hpc_les_avg; d_avg]';
+    
+    title_suffix = ' avg worm pref, training & testing';
+    
+    figure;
+    subplot(2,1,1);
+    plot(rs);
+    legend('HPC','PFC','ALL');
+    title_message = horzcat(num2str(val),' REPL',title_suffix);
+    title(title_message);
+    subplot(2,1,2);
+    plot(ds);
+    legend('HPC','PFC','ALL');
+    title_message = horzcat(num2str(val),' DEGR',title_suffix);
+    title(title_message);
+    drawnow;
+    
+    pref_changes_while_learning = {rs, ds};
+    
+    filename = horzcat(dir,'\', num2str(val),'pref_change_through_trial.mat');
+    
+    save(filename, 'pref_changes_while_learning');
+    saveas(gcf, horzcat(dir, '\', num2str(val), '_', 'pref_change_through_trial'), 'fig');
+
+    r_pfc_lesion_prefs_avg = [];
+    r_hpc_lesion_prefs_avg = [];
+    r_prefs_avg = [];
+
+    d_pfc_lesion_prefs_avg = [];
+    d_hpc_lesion_prefs_avg = [];
+    d_prefs_avg = [];
 end
 
 function showTrials(error, avg_side_preference, avg_first_checks, epp, type)
