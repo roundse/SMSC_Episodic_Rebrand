@@ -95,9 +95,9 @@ global REPL;
 global PILF;
 global DEGR;
 
-REPL = [ 5.0   2.0];
+REPL = [ 4.0   2.0];
 PILF = [ 0     2.0];
-DEGR = [-5.0   2.0];
+DEGR = [-6.0   2.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos
