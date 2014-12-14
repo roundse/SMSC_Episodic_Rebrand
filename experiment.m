@@ -685,9 +685,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     global init_weight;
 
     %%   was 0.55
-    w_food_to_pfc = 0.1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.6 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.6 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -698,7 +698,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0.05 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.001 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
@@ -736,11 +736,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.1 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.2 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.6 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.6 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;

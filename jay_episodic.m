@@ -50,7 +50,7 @@ drawnow;
 internal_weights = 1;
 decay = 0.01;
 
-pfc_learning_rate = .3;
+pfc_learning_rate = .15;
 learning_rate = 0.6;
 
 learning_reduction = 1;
