@@ -23,7 +23,7 @@ run_protocol('pre_training', cycles, is_disp_weights, VALUE);
 %%%%%%%%%%%%%%%%%%%%%%
 % Don't give it training, Emily, no matter how you may want to
 %%%%%%%%%%%%%%%%%%%%%%
-%run_protocol('training', cycles, is_disp_weights, VALUE);
+run_protocol('training', cycles, is_disp_weights, VALUE);
 % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
 % save(filename);
 
@@ -167,8 +167,8 @@ is_pfc = 0;
 
 food_types = [peanut worm];
 rev_food = [worm peanut];
-time_lengths = [120, 4];
-% time_lengths = [1, 1];
+test_time_lengths = [120, 4];
+train_time_lengths = [124, 4];
 
 type_order = randperm(2);
 time_order = randperm(2);
@@ -220,12 +220,12 @@ for j=1:duration
         
         % if testing time is always 4 then 120
         if is_testing || is_training
-            current_time = time_lengths(l);
+            current_time = test_time_lengths(l);
             current_type = food_types(type_order(l));
             
             % otherwise time is randomly one way or the other
         else
-            current_time = time_lengths(time_order(l));
+            current_time = train_time_lengths(time_order(l));
             current_type = food_types(type_order(l));
             
         end
@@ -408,6 +408,7 @@ for j=1:duration
                 = place_slot_check;
             reward_stim(value, cycles, is_replenish);
         end
+        run_empty();
     end
 
     global decay;
@@ -479,6 +480,9 @@ for j=1:duration
         time_order = [time_order(2) time_order(1)];
         %type_order = [type_order(2) type_order(1)];
     end
+    if is_training || is_testing
+        run_empty;
+    end
 end
 
 end
@@ -487,7 +491,7 @@ function run_empty ()
     global PLACE_SLOTS;
     global place;
     global cycles;
-    
+    disp('Cycling empty');
     for i = 1:4
         cycle_net(0.*PLACE_SLOTS(1,:), 0.*place(i,:), cycles, 0);
     end
