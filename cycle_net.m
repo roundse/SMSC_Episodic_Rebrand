@@ -56,6 +56,8 @@ end
 
 global is_consolidation;
 
+global pfc_out;
+
 global place_side_inhibit;
 place_side_inhibit = food_stim;
 
@@ -99,6 +101,10 @@ for j = 2:cycles
 %         decay_hpc();
     end
 
+    if run_pfc & run_hpc
+        cycle_hpc(hpc_out, w_pfc_to_hpc, pfc_out, value);
+    end
+    
     if run_pfc
         cycle_pfc(pfc_out, w_place_to_pfc, place_out, value);
         cycle_pfc(pfc_out, w_food_to_pfc, food_out, value);

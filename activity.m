@@ -15,10 +15,10 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     end
     
     GAIN = 5;
-    persist = 0.1;
+    persist = 0.2;
 
     len = length(net_in);
-    noise = 0.002*rand(1,len)-0.001;
+    noise = 0.1*rand(1,len)-0.05;
     
     stim_in = INP_STR*(stimulus*stim_weights');
     intranet_in = 1*(net_in*net_to_netweights');

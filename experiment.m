@@ -515,6 +515,13 @@ global place;
 global is_testing;
 global ACT_VAL;
 
+global w_pfc_to_hpc;
+
+figure;
+imagesc(w_pfc_to_hpc);
+colorbar;
+drawnow;
+
 if ~is_testing
     if is_replenish
         val = REPL;
@@ -597,7 +604,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     PLACE_CELLS = 14;
 
     EXT_CONNECT = 0.1;                   % Chance of connection = 20%
-    INT_CONNECT = 0.04;
+    INT_CONNECT = 0.08;
 
     global worm;
     global peanut;
@@ -682,23 +689,22 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     pfc_eye = eye(PFC_SIZE);
     %w_pfc_to_pfc = zeros(PFC_SIZE);
     
-    global init_weight;
-
+    
     %%   was 0.55
-    w_food_to_pfc = 0.6 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.6 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
-    % w_pfc_to_hpc = 0.55 .* ones(PFC_SIZE, HPC_SIZE);
+    w_pfc_to_hpc = 0.00 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
     global w_pfc_to_hpc_init;
     w_pfc_to_hpc_init = w_pfc_to_hpc;
     global w_pfc_to_hpc_prev
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0.001 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.008 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
@@ -736,11 +742,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.2 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.6 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.6 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;

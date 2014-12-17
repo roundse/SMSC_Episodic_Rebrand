@@ -48,10 +48,10 @@ drawnow;
 % int_init_w = 0.05;
 
 internal_weights = 1;
-decay = 0.01;
+decay = 0.009; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .15;
-learning_rate = 0.6;
+pfc_learning_rate = .24;
+learning_rate = 0.44;
 
 learning_reduction = 1;
 cycles = 10; % lower cycles appeared to make it more random.
@@ -70,7 +70,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 15;
+runs = 35;
 
 % global weight_reduction;
 % weight_reduction = 1;
@@ -95,9 +95,9 @@ global REPL;
 global PILF;
 global DEGR;
 
-REPL = [ 5.0   2.0];
+REPL = [ 4.0   2.0];
 PILF = [ 0     2.0];
-DEGR = [-5.0   2.0];
+DEGR = [-3.0   2.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos
