@@ -293,8 +293,9 @@ for j=1:duration
         pfc_learning = 0;
         hpc_learning = 0;
 
-        HVAL = 0;
-        PVAL = 0;
+        % DO I CHANGE THESE TOO?
+        HVAL = 1;
+        PVAL = 1;
         
         if is_testing || is_training
             if current_time == 4
@@ -358,8 +359,10 @@ for j=1:duration
                     v = val(peanut);
                 end
                 
-                PVAL = 0;
-                HVAL = 0;
+                % CHANGE THIS IN ORDER TO CHANGE WHAT VALUE IS PASSED BY
+                % DEFAULT
+                PVAL = 1;
+                HVAL = 1;
                 %                   if is_testing
                 %disp(['Currently in the consolidating phase...value is ', num2str(0)]);
                 %                   end
@@ -480,9 +483,9 @@ for j=1:duration
         time_order = [time_order(2) time_order(1)];
         %type_order = [type_order(2) type_order(1)];
     end
-    if is_training || is_testing
-        run_empty;
-    end
+%     if is_training || is_testing
+%         run_empty;
+%     end
 end
 
 end
