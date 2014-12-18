@@ -51,8 +51,8 @@ drawnow;
 internal_weights = 1;
 decay = 0.01; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .3;
-learning_rate = 0.6;
+pfc_learning_rate = .2;
+learning_rate = 0.5;
 
 ACT_NOISE = .1;
 
