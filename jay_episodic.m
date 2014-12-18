@@ -33,6 +33,7 @@ global INP_STR;
 global cycles;
 global learning_reduction;
 global activity_fig;
+global ACT_NOISE;
 % global init_weight;
 % global int_init_w;
 
@@ -52,6 +53,8 @@ decay = 0.009; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
 pfc_learning_rate = .24;
 learning_rate = 0.44;
+
+ACT_NOISE = .1;
 
 learning_reduction = 1;
 cycles = 10; % lower cycles appeared to make it more random.

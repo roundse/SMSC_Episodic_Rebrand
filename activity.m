@@ -7,6 +7,7 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     global ACT_VAL;
     global IS_CHECKING;
     global VAL_PAIR;
+    global ACT_NOISE;
     
     if IS_CHECKING
         val = sum(VAL_PAIR) * ACT_VAL;
@@ -18,7 +19,7 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     persist = 0.2;
 
     len = length(net_in);
-    noise = 0.1*rand(1,len)-0.05;
+    noise = ACT_NOISE*rand(1,len)-(ACT_NOISE/2);
     
     stim_in = INP_STR*(stimulus*stim_weights');
     intranet_in = 1*(net_in*net_to_netweights');
