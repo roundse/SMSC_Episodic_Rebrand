@@ -49,10 +49,10 @@ drawnow;
 % int_init_w = 0.05;
 
 internal_weights = 1;
-decay = 0.009; % 0.01 and 0.00 seemed random on degrade, trying supa hi
+decay = 0.01; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .24;
-learning_rate = 0.44;
+pfc_learning_rate = .3;
+learning_rate = 0.6;
 
 ACT_NOISE = .1;
 
@@ -100,7 +100,7 @@ global DEGR;
 
 REPL = [ 4.0   2.0];
 PILF = [ 0     2.0];
-DEGR = [-3.0   2.0];
+DEGR = [-4.0   2.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos

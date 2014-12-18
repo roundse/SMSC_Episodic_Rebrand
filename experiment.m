@@ -23,7 +23,7 @@ run_protocol('pre_training', cycles, is_disp_weights, VALUE);
 %%%%%%%%%%%%%%%%%%%%%%
 % Don't give it training, Emily, no matter how you may want to
 %%%%%%%%%%%%%%%%%%%%%%
-run_protocol('training', cycles, is_disp_weights, VALUE);
+%run_protocol('training', cycles, is_disp_weights, VALUE);
 % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
 % save(filename);
 
@@ -411,7 +411,9 @@ for j=1:duration
                 = place_slot_check;
             reward_stim(value, cycles, is_replenish);
         end
-        run_empty();
+        if ~is_training && ~is_testing
+            run_empty();
+        end
     end
 
     global decay;
@@ -483,9 +485,9 @@ for j=1:duration
         time_order = [time_order(2) time_order(1)];
         %type_order = [type_order(2) type_order(1)];
     end
-%     if is_training || is_testing
-%         run_empty;
-%     end
+    if is_training || is_testing
+        run_empty;
+    end
 end
 
 end
@@ -711,7 +713,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0.008 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.00 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
