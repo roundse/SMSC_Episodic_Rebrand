@@ -37,7 +37,7 @@ global ACT_NOISE;
 % global init_weight;
 % global int_init_w;
 
-figure;
+%figure;
 title('Network Acivity');
 activity_fig = gcf;
 drawnow;
@@ -236,7 +236,7 @@ function display_lesioned_side_preferences(dir, val)
     
     title_suffix = ' avg worm pref, training & testing';
     
-    figure;
+    %figure;
     subplot(2,1,1);
     plot(rs);
     legend('HPC','PFC','ALL');
