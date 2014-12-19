@@ -124,11 +124,11 @@ global IS_CHECKING;
 global VAL_PAIR;
 global ACT_VAL;
     
-if VALUE == 1
+if VALUE == 2
     value = REPL;
     disp('REPLENISH TRIAL~~~~~~~~~~~~~~~~~~~~~~~~');
     
-elseif VALUE == 2
+elseif VALUE == 1
     value = DEGR;
     disp('DEGRADE TRIAL~~~~~~~~~~~~~~~~~~~~~~~~~~');
 
@@ -706,14 +706,16 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
-    w_pfc_to_hpc = 0.08 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+    % THIS IS FOR PFC/HPC INHIBITION. DO NOT USE!
+    w_pfc_to_hpc = 0.0 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     global w_pfc_to_hpc_init;
     w_pfc_to_hpc_init = w_pfc_to_hpc;
     global w_pfc_to_hpc_prev
     w_pfc_to_hpc_prev = w_pfc_to_hpc;
 
     % global w_pfc_to_pfc;
-    w_pfc_to_pfc = 0.08 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
+    w_pfc_to_pfc = 0.05 .* (rand(PFC_SIZE, PFC_SIZE) < INT_CONNECT);
     global w_pfc_to_pfc_init;
     w_pfc_to_pfc_init = w_pfc_to_pfc;
     global w_pfc_to_pfc_prev;
