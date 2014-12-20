@@ -612,8 +612,8 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
-    INT_CONNECT = 0.08;
+    EXT_CONNECT = 0.2;                   % Chance of connection = 20%
+    INT_CONNECT = 0.0;
 
     global worm;
     global peanut;
@@ -706,7 +706,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
-    w_pfc_to_hpc = -0.00000004 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+    w_pfc_to_hpc = -0.000000009 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
     global w_pfc_to_hpc_init;
     w_pfc_to_hpc_init = w_pfc_to_hpc;
     global w_pfc_to_hpc_prev
