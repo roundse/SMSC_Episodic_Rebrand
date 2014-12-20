@@ -37,7 +37,7 @@ global ACT_NOISE;
 % global init_weight;
 % global int_init_w;
 
-%figure;
+figure;
 title('Network Acivity');
 activity_fig = gcf;
 drawnow;
@@ -49,10 +49,10 @@ drawnow;
 % int_init_w = 0.05;
 
 internal_weights = 1;
-decay = 0.01; % 0.01 and 0.00 seemed random on degrade, trying supa hi
+decay = 0.0008; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .2;
-learning_rate = 0.5;
+pfc_learning_rate = .3;
+learning_rate = 0.7;
 
 ACT_NOISE = .1;
 
@@ -73,7 +73,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 35;
+runs = 10;
 
 % global weight_reduction;
 % weight_reduction = 1;
@@ -236,7 +236,7 @@ function display_lesioned_side_preferences(dir, val)
     
     title_suffix = ' avg worm pref, training & testing';
     
-    %figure;
+    figure;
     subplot(2,1,1);
     plot(rs);
     legend('HPC','PFC','ALL');
