@@ -124,11 +124,11 @@ global IS_CHECKING;
 global VAL_PAIR;
 global ACT_VAL;
     
-if VALUE == 2
+if VALUE == 1
     value = REPL;
     disp('REPLENISH TRIAL~~~~~~~~~~~~~~~~~~~~~~~~');
     
-elseif VALUE == 1
+elseif VALUE == 2
     value = DEGR;
     disp('DEGRADE TRIAL~~~~~~~~~~~~~~~~~~~~~~~~~~');
 
@@ -286,8 +286,8 @@ for j=1:duration
 
                 HVAL = v;
                 PVAL = v;
-
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, v);
+                % CACHING
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*2, v);
             end 
         end
         pfc_learning = 0;
@@ -556,7 +556,7 @@ if ~is_testing
             PVAL = v;
             
             % disp(['Currently in the recovery phase...value is ', num2str(v)]);
-            cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, v);
+            cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*2, v);
         end
     end
     
@@ -602,9 +602,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 200;
+    PFC_SIZE = 250;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
@@ -613,7 +613,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     PLACE_CELLS = 14;
 
     EXT_CONNECT = 0.2;                   % Chance of connection = 20%
-    INT_CONNECT = 0.0;
+    INT_CONNECT = 0.1;
 
     global worm;
     global peanut;
@@ -700,9 +700,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     
     
     %%   was 0.55
-    w_food_to_pfc = 0.1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.5 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.5 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -751,11 +751,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.01 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.8 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.8 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
