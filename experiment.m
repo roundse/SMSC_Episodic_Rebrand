@@ -324,7 +324,7 @@ for j=1:duration
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if is_testing
             pfc_learning = 0;
-            hpc_learning = 1;
+            hpc_learning = 0;
         end
 
         hpc_learning = 1;
@@ -602,9 +602,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 250;
+    PFC_SIZE = 300;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
