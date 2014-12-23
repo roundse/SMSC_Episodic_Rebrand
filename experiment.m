@@ -324,7 +324,7 @@ for j=1:duration
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if is_testing
             pfc_learning = 0;
-            hpc_learning = 0;
+            hpc_learning = 1;
         end
 
         hpc_learning = 1;
