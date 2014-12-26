@@ -700,9 +700,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     
     
     %%   was 0.55
-    w_food_to_pfc = 0.8 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.4 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.8 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.4 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -753,9 +753,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     global w_hpc_to_hpc;
     w_hpc_to_hpc = 0.01 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.5 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.5 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;

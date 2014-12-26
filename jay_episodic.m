@@ -49,7 +49,7 @@ drawnow;
 % int_init_w = 0.05;
 
 internal_weights = 1;
-decay = 0.00007; % 0.01 and 0.00 seemed random on degrade, trying supa hi
+decay = 0.0001; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
 pfc_learning_rate = .3;
 learning_rate = 0.6;
