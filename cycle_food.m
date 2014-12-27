@@ -40,7 +40,7 @@ function returnable = cycle_food(food_in, input_weights, input)
         len = length(total_inputs);
         for p=1:len
             total_inputs(p) = total_inputs(p) + ...
-                             ((total_inputs(p) - sum(total_inputs)) / len);
+                             ((total_inputs(p) - sum(total_inputs)));
         end
         
         total_inputs = total_inputs - [total_inputs(2) total_inputs(1)];

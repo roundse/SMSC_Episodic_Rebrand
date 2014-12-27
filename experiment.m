@@ -524,12 +524,12 @@ global place;
 global is_testing;
 global ACT_VAL;
 
-global w_pfc_to_hpc;
+% global w_pfc_to_hpc;
 
-figure;
-imagesc(w_pfc_to_hpc);
-colorbar;
-drawnow;
+% figure;
+% imagesc(w_pfc_to_hpc);
+% colorbar;
+% drawnow;
 
 if ~is_testing
     if is_replenish
@@ -602,9 +602,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 300;
+    PFC_SIZE = 200;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;

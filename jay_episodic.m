@@ -57,7 +57,7 @@ learning_rate = 0.6;
 ACT_NOISE = .1;
 
 learning_reduction = 1;
-cycles = 10; % lower cycles appeared to make it more random.
+cycles = 7; % lower cycles appeared to make it more random.
 
 % lesions
 switch_lesion = 1;
@@ -73,7 +73,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 10;
+runs = 15;
 
 % global weight_reduction;
 % weight_reduction = 1;

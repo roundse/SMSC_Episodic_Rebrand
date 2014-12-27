@@ -47,7 +47,7 @@ function returnable = cycle_place(place_in, input_weights, input)
         len = length(total_inputs);
         for p=1:len
             total_inputs(p) = total_inputs(p) + ...
-                             ((total_inputs(p) - sum(total_inputs)) / len);
+                             ((total_inputs(p) - sum(total_inputs)));
         end
 
         place_out = activity(place_in, place_eye, total_inputs, ...

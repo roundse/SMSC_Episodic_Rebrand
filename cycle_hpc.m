@@ -39,7 +39,7 @@ if nargin < 3
     returnable = hpc_out;
  
     if hpc_learning & run_hpc & internal_weights
-%         w_hpc_to_hpc = oja(hpc_out, hpc_in, w_hpc_to_hpc, HVAL);
+        w_hpc_to_hpc = oja(hpc_out, hpc_in, w_hpc_to_hpc, HVAL);
     end
     
     if hpc_learning
