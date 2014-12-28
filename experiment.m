@@ -124,11 +124,11 @@ global IS_CHECKING;
 global VAL_PAIR;
 global ACT_VAL;
     
-if VALUE == 2
+if VALUE == 1
     value = REPL;
     disp('REPLENISH TRIAL~~~~~~~~~~~~~~~~~~~~~~~~');
     
-elseif VALUE == 1
+elseif VALUE == 2
     value = DEGR;
     disp('DEGRADE TRIAL~~~~~~~~~~~~~~~~~~~~~~~~~~');
 
@@ -288,6 +288,9 @@ for j=1:duration
                     place(i,:) = current_type;
                 end
 
+                VAL_PAIR = REPL;
+                ACT_VAL = 1 / (1 + REPL(1) + REPL(2));
+                
                 HVAL = v;
                 PVAL = v;
                 % CACHING
