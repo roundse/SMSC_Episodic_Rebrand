@@ -61,7 +61,7 @@ for k = 1:K
     i = I(k);
 
     delta_wy = eta*y(i) * (alpha*y_old(i) - y_wy(j));
-    wy(j,i) = (wy(j,i) + value*delta_wy);
+    wy(j,i) = (wy(j,i) + delta_wy);
 end
 
 wx = wx .* wx_bin;

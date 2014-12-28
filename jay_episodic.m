@@ -101,6 +101,11 @@ global DEGR;
 REPL = [ 6.0   2.0];
 PILF = [ 0     2.0];
 DEGR = [-6.0   2.0];
+
+% REPL = fliplr(REPL);
+% PILF = fliplr(PILF);
+% DEGR = fliplr(DEGR);
+
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos
