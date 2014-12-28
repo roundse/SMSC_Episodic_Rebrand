@@ -196,6 +196,9 @@ else
     duration = 4;
 end
 
+global IS_STORING;
+IS_STORING = 0;
+
 global hpc_average;
 global pfc_average;
 
@@ -270,6 +273,7 @@ for j=1:duration
 
         pfc_learning = 1;
         hpc_learning = 1;
+        IS_STORING = 1;
         if is_testing
             pfc_learning = 0;
         end
@@ -290,6 +294,7 @@ for j=1:duration
                 cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*2, v);
             end 
         end
+        IS_STORING = 0;
         pfc_learning = 0;
         hpc_learning = 0;
 
@@ -751,7 +756,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.01 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.00 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
     w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
