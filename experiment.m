@@ -4,6 +4,8 @@ global TRIAL_DIR;
 global GAIN;
 GAIN = 5;
 
+global test_learning;
+
 % to do
 % - store lesion prefs based on peanut / worm
 % - display at end of trial or store
@@ -12,35 +14,42 @@ GAIN = 5;
 
 initialize_weights(cycles, is_disp_weights, VALUE);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% PRE: Agent stores both foods. Consolidates 124 hours and is allowed to
-% retrieve the foods. Learns worms decay.
-% Then agent stores both foods. Consolidates 4 hours and then is
-% allowed to retrieve the foods. Learns worms are still good.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if (test_learning)
+    run_test_protocol(cycles, is_disp_weights, VALUE);
 
-run_protocol('pre_training', cycles, is_disp_weights, VALUE);
-%%%%%%%%%%%%%%%%%%%%%%
-% Don't give it training, Emily, no matter how you may want to
-%%%%%%%%%%%%%%%%%%%%%%
-%run_protocol('training', cycles, is_disp_weights, VALUE);
-% filename = horzcat(TRIAL_DIR, 'after training', '_variables');
-% save(filename);
+else
 
-% run_empty();
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % PRE: Agent stores both foods. Consolidates 124 hours and is allowed to
+    % retrieve the foods. Learns worms decay.
+    % Then agent stores both foods. Consolidates 4 hours and then is
+    % allowed to retrieve the foods. Learns worms are still good.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
-% stores the second food, and consolidates the leftover time.
-% Then gets to recover its caches.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    run_protocol('pre_training', cycles, is_disp_weights, VALUE);
+    %%%%%%%%%%%%%%%%%%%%%%
+    % Don't give it training, Emily, no matter how you may want to
+    %%%%%%%%%%%%%%%%%%%%%%
+    %run_protocol('training', cycles, is_disp_weights, VALUE);
+    % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
+    % save(filename);
 
-% show_weights('before testing',1);
+    % run_empty();
 
-[worm_trial pean_trial] = ...
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
+    % stores the second food, and consolidates the leftover time.
+    % Then gets to recover its caches.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % show_weights('before testing',1);
+
+    [worm_trial pean_trial] = ...
     run_protocol('testing', cycles, is_disp_weights, VALUE);
 
-% show_weights('after testing',1);
+    % show_weights('after testing',1);
+
+end
 
 global debug_sides;
 global r_pfc_lesion_prefs_avg;
@@ -108,6 +117,59 @@ end
 end
 
 function [worm_trial pean_trial] = ...
+    run_test_protocol (prot_type, cycles, is_disp_weights, VALUE)
+    global pfc_learning;
+    global hpc_learning;
+    global HVAL;
+    global PVAL;
+    global REPL; global PILF; global DEGR;
+    
+    global is_replenish;
+    is_replenish = 1;
+    
+    global is_testing;
+    is_testing = 0;
+    
+    value = DEGR;
+    tests = 10;
+    cycles = 7;
+    
+    values = [DEGR; REPL; PILF];
+    
+    side_prefs = zeros(2,tests);
+    pfc_learning = 1;
+    hpc_learning = 1;
+
+    for j=1:tests
+        for i=1:3
+            value = values(i,:);
+            %         end
+            %         if ~is_testing && ~is_training
+            disp('PRE-TRAINING Place slot check');
+            
+            for k=1:1
+                reward_stim(value, cycles, 0);
+            end
+            
+            [checked_places, side_pref, avg_checks, first_checked] ...
+                = place_slot_check;
+
+            side_prefs(i,j) = side_pref;
+            initialize_weights(cycles, 0, DEGR);
+        end
+    end
+    
+    for j=1:3
+        prefs = side_prefs(j,:);
+        good_prefs = prefs(prefs>0);
+        mean_pref = mean(good_prefs');
+        percent_fail = length(good_prefs) / length(prefs);
+        side_performance = [mean_pref percent_fail]
+    end
+    
+    end
+
+function [worm_trial pean_trial] = ...
     run_protocol (prot_type, cycles, is_disp_weights, VALUE)
 global PLACE_SLOTS;
 
@@ -124,11 +186,11 @@ global IS_CHECKING;
 global VAL_PAIR;
 global ACT_VAL;
     
-if VALUE == 1
+if VALUE == 2
     value = REPL;
     disp('REPLENISH TRIAL~~~~~~~~~~~~~~~~~~~~~~~~');
     
-elseif VALUE == 2
+elseif VALUE == 1
     value = DEGR;
     disp('DEGRADE TRIAL~~~~~~~~~~~~~~~~~~~~~~~~~~');
 
@@ -564,7 +626,7 @@ if ~is_testing
             PVAL = v;
             
             % disp(['Currently in the recovery phase...value is ', num2str(v)]);
-            cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*2, v);
+            cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles, v);
         end
     end
     
@@ -620,7 +682,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.2;                   % Chance of connection = 20%
+    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
     INT_CONNECT = 0.1;
 
     global worm;
@@ -714,7 +776,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
-    w_pfc_to_hpc = -0.00000005 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+    w_pfc_to_hpc = 0 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
     global w_pfc_to_hpc_init;
     w_pfc_to_hpc_init = w_pfc_to_hpc;
     global w_pfc_to_hpc_prev

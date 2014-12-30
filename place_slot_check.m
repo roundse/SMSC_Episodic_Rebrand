@@ -121,7 +121,7 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
         avg = final_place_activity;
         [slot_signal ranked_slot min_var] = find_place(avg); % <-- used for the eleminating input model
         
-        if (ranked_slots(p) ~= -1)
+        if (ranked_slot ~= -1)
             ranked_slots(p) = ranked_slot;
             min_vars(p) = min_var;
             p = p +1;
@@ -151,8 +151,8 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     
     first_checked = avg_checks(1)<8;
     
-    if trial_failed && is_testing
-        side_pref = -1;
+    if trial_failed
+        side_pref = -1
         first_checked = -1;
     end
 

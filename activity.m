@@ -11,9 +11,9 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     global IS_STORING;
 
     if IS_CHECKING || IS_STORING
-        val = HVAL * ACT_VAL;
+        val = HVAL * (1/3);
     else
-        val = 1 - HVAL;
+        val = -1 * HVAL;
     end
     
     GAIN = 5;

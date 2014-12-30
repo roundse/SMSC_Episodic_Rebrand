@@ -156,26 +156,3 @@ pfc_average = pfc_average + mean(pfc);
 
 place_activity = final_place_activity;
 end
-
-function decay_hpc()
-
-    global w_hpc_to_place;
-    global w_hpc_to_food;
-    global w_place_to_hpc;
-    global w_food_to_hpc;
-
-    decay_weights(w_hpc_to_place);
-    decay_weights(w_hpc_to_food);
-    decay_weights(w_place_to_hpc);
-    decay_weights(w_food_to_hpc);
-
-end
-
-function w = decay_weights(w)
-
-    global decay;
-    half_d = decay/2;
-    wd = half_d*rand(size(w)) - half_d;
-    w = w + wd;
-
-end

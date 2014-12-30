@@ -3,6 +3,9 @@ clear;
 % close all;
 % clc;
 
+global test_learning;
+test_learning = 1;
+
 global r_pfc_lesion_prefs_avg;
 global r_hpc_lesion_prefs_avg;
 global d_pfc_lesion_prefs_avg;
@@ -48,16 +51,16 @@ drawnow;
 % init_weight = 0.05;
 % int_init_w = 0.05;
 
-internal_weights = 0;
+internal_weights = 1;
 decay = 0.0001; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .3;
-learning_rate = 0.6;
+pfc_learning_rate = .3; %3
+learning_rate = 0.6; %6
 
-ACT_NOISE = .1;
+ACT_NOISE = .2;
 
-learning_reduction = 1;
-cycles = 7; % lower cycles appeared to make it more random.
+learning_reduction = 0;
+cycles = 10; % lower cycles appeared to make it more random.
 
 % lesions
 switch_lesion = 1;
@@ -73,7 +76,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 15;
+runs = 7;
 
 % global weight_reduction;
 % weight_reduction = 1;
@@ -90,7 +93,7 @@ int_max_weight = 2;
 
 pfc_max = 4;
 hpc_max = 8;
-max_max_weight = 8;
+max_max_weight = 2;
 
 INP_STR = 0.2;
 
