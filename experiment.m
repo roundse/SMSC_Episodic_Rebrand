@@ -131,8 +131,8 @@ function [worm_trial pean_trial] = ...
     is_testing = 0;
     
     value = DEGR;
-    tests = 5;
-    cycles = 7;
+    tests = 10;
+    cycles = 5;
     
     values = [DEGR; REPL; PILF];
     val_length = length(values);
@@ -166,7 +166,8 @@ function [worm_trial pean_trial] = ...
         good_prefs = prefs(prefs>0);
         mean_pref = mean(good_prefs');
         percent_fail = length(good_prefs) / length(prefs);
-        side_performance = [mean_pref percent_fail]
+        variance = var(good_prefs);
+        pref_pFail_var = [mean_pref percent_fail variance]
     end
     
 end
@@ -684,7 +685,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.02;                   % Chance of connection = 20%
+    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
     INT_CONNECT = 0.1;
 
     global worm;
@@ -772,9 +773,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     
     
     %%   was 0.55
-    w_food_to_pfc = 1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -823,11 +824,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = -0.4 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
