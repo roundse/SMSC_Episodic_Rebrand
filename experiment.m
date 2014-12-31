@@ -160,6 +160,7 @@ function [worm_trial pean_trial] = ...
         end
     end
     
+    disp('---------------------------');
     for j=1:val_length
         prefs = side_prefs(j,:);
         good_prefs = prefs(prefs>0);
@@ -683,7 +684,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.01;                   % Chance of connection = 20%
+    EXT_CONNECT = 0.02;                   % Chance of connection = 20%
     INT_CONNECT = 0.1;
 
     global worm;
@@ -824,9 +825,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     global w_hpc_to_hpc;
     w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
