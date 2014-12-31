@@ -131,7 +131,7 @@ function [worm_trial pean_trial] = ...
     is_testing = 0;
     
     value = DEGR;
-    tests = 15;
+    tests = 5;
     cycles = 7;
     
     values = [DEGR; REPL; PILF];
@@ -673,9 +673,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 300;
+    PFC_SIZE = 200;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
@@ -771,9 +771,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     
     
     %%   was 0.55
-    w_food_to_pfc = 0.01 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 1 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.01 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 1 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -822,11 +822,11 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.1 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;

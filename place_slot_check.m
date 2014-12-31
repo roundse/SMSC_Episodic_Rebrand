@@ -152,7 +152,7 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     first_checked = avg_checks(1)<8;
     
     if trial_failed
-%         side_pref = -1
+        side_pref = -1;
         first_checked = -1;
     end
 
