@@ -131,21 +131,20 @@ function [worm_trial pean_trial] = ...
     is_testing = 0;
     
     value = DEGR;
-    tests = 10;
+    tests = 15;
     cycles = 7;
     
     values = [DEGR; REPL; PILF];
+    val_length = length(values);
     
     side_prefs = zeros(2,tests);
-    pfc_learning = 1;
-    hpc_learning = 1;
 
     for j=1:tests
-        for i=1:3
+        for i=1:val_length
             value = values(i,:);
-            %         end
-            %         if ~is_testing && ~is_training
-            disp('PRE-TRAINING Place slot check');
+
+            pfc_learning = 1;
+            hpc_learning = 1;
             
             for k=1:1
                 reward_stim(value, cycles, 0);
@@ -153,13 +152,15 @@ function [worm_trial pean_trial] = ...
             
             [checked_places, side_pref, avg_checks, first_checked] ...
                 = place_slot_check;
+            
+            show_weights('short testing',1);
 
             side_prefs(i,j) = side_pref;
             initialize_weights(cycles, 0, DEGR);
         end
     end
     
-    for j=1:3
+    for j=1:val_length
         prefs = side_prefs(j,:);
         good_prefs = prefs(prefs>0);
         mean_pref = mean(good_prefs');
@@ -167,7 +168,7 @@ function [worm_trial pean_trial] = ...
         side_performance = [mean_pref percent_fail]
     end
     
-    end
+end
 
 function [worm_trial pean_trial] = ...
     run_protocol (prot_type, cycles, is_disp_weights, VALUE)
@@ -672,9 +673,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 300;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 200;
+    PFC_SIZE = 300;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
@@ -682,7 +683,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     FOOD_CELLS = 2;
     PLACE_CELLS = 14;
 
-    EXT_CONNECT = 0.1;                   % Chance of connection = 20%
+    EXT_CONNECT = 0.15;                   % Chance of connection = 20%
     INT_CONNECT = 0.1;
 
     global worm;
@@ -770,9 +771,9 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     
     
     %%   was 0.55
-    w_food_to_pfc = 0.4 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_food_to_pfc = 0.01 .* (rand(FOOD_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_food = w_food_to_pfc';
-    w_place_to_pfc = 0.4 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
+    w_place_to_pfc = 0.01 .* (rand(PLACE_CELLS, PFC_SIZE) < EXT_CONNECT);
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
@@ -821,7 +822,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = 0.00 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.1 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
     w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';

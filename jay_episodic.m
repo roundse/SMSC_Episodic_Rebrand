@@ -57,10 +57,10 @@ decay = 0.0001; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 pfc_learning_rate = .3; %3
 learning_rate = 0.6; %6
 
-ACT_NOISE = .2;
+ACT_NOISE = .01;
 
 learning_reduction = 0;
-cycles = 10; % lower cycles appeared to make it more random.
+cycles = 7; % lower cycles appeared to make it more random.
 
 % lesions
 switch_lesion = 1;
@@ -93,7 +93,7 @@ int_max_weight = 2;
 
 pfc_max = 4;
 hpc_max = 8;
-max_max_weight = 2;
+max_max_weight = 8;
 
 INP_STR = 0.2;
 
@@ -101,9 +101,9 @@ global REPL;
 global PILF;
 global DEGR;
 
+DEGR = [-6.0   2.0];
 REPL = [ 6.0   2.0];
 PILF = [ 0     2.0];
-DEGR = [-6.0   2.0];
 
 % REPL = fliplr(REPL);
 % PILF = fliplr(PILF);

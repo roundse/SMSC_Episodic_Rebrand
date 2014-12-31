@@ -130,7 +130,7 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
         end
         
         if i > 6
-           disp('danger will robinson');
+%            disp('danger will robinson');
            trial_failed = 1;
            break;
         end
@@ -146,13 +146,13 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     avg_checks = ranked_slots';
 
     if debug
-        rank_and_variance = [ranked_slots min_vars]
+%         rank_and_variance = [ranked_slots min_vars]
     end
     
     first_checked = avg_checks(1)<8;
     
     if trial_failed
-        side_pref = -1
+%         side_pref = -1
         first_checked = -1;
     end
 
@@ -172,13 +172,13 @@ function place_outputs = place_norm_activity ()
     IS_CHECKING = 1;
     HVAL = 0;
     
-    runs = 4;
+    runs = 1;
     
     place_outputs = zeros(PLACE_CELLS);
 
     for i = 1:runs
         spots = spot_shuffler(1,14);
-        for p = spots
+        for p = 1:14
             injection_current = PLACE_SLOTS(p,:);
 
             place_outputs(p,:) = place_outputs(p,:) + ...
@@ -221,8 +221,8 @@ function side_pref = side_pref_calc (ranked_slots, msg)
     first_side(ranked_slots<8) = 1;
  
     side_pref = sum(first_side(1:7));
-    disp(horzcat(msg,'Worms in first seven checks: '));
-    disp(side_pref);
+%     disp(horzcat(msg,'Worms in first seven checks: '));
+%     disp(side_pref);
 end
 
 function places = spot_shuffler (start, finish)
