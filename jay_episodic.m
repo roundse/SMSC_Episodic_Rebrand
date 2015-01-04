@@ -3,9 +3,6 @@ clear;
 % close all;
 % clc;
 
-global test_learning;
-test_learning = 1;
-
 global r_pfc_lesion_prefs_avg;
 global r_hpc_lesion_prefs_avg;
 global d_pfc_lesion_prefs_avg;
@@ -52,15 +49,15 @@ drawnow;
 % int_init_w = 0.05;
 
 internal_weights = 1;
-decay = 0.0001; % 0.01 and 0.00 seemed random on degrade, trying supa hi
+decay = 0.00038; % 0.01 and 0.00 seemed random on degrade, trying supa hi
 
-pfc_learning_rate = .3; %3
-learning_rate = 0.6; %6
+pfc_learning_rate = .3;
+learning_rate = 0.6;
 
-ACT_NOISE = .01;
+ACT_NOISE = .1;
 
-learning_reduction = 0;
-cycles = 7; % lower cycles appeared to make it more random.
+learning_reduction = 1;
+cycles = 10; % lower cycles appeared to make it more random.
 
 % lesions
 switch_lesion = 1;
@@ -76,7 +73,7 @@ show_pfc_w = debug & ~lesion_pfc;
 show_hpc_w = debug & ~lesion_hpc;
 
 % number of tests
-runs = 7;
+runs = 10;
 
 % global weight_reduction;
 % weight_reduction = 1;
@@ -101,14 +98,9 @@ global REPL;
 global PILF;
 global DEGR;
 
-DEGR = [-6.0   2.0];
 REPL = [ 6.0   2.0];
 PILF = [ 0     2.0];
-
-% REPL = fliplr(REPL);
-% PILF = fliplr(PILF);
-% DEGR = fliplr(DEGR);
-
+DEGR = [-6.0   2.0];
 % TWO THINGS: MAYBE LOWER DECAY, MAYBE LOWER THE DEGRADE VALUE
 
 global pos

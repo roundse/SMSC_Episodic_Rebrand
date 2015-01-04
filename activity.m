@@ -8,12 +8,11 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     global IS_CHECKING;
     global VAL_PAIR;
     global ACT_NOISE;
-    global IS_STORING;
-
-    if IS_CHECKING || IS_STORING
-        val = HVAL * (1/8);
+    
+    if IS_CHECKING
+        val = sum(VAL_PAIR) * ACT_VAL;
     else
-        val = -1 * HVAL;
+        val = HVAL * ACT_VAL;
     end
     
     GAIN = 5;
@@ -26,7 +25,7 @@ function [net_in] = activity(net_in, stim_weights, stimulus, ...
     intranet_in = 1*(net_in*net_to_netweights');
 
     I = stim_in + intranet_in;
-    I = I*(1) + noise;
+    I = I + noise;
     
     net_in = persist.*net_in + (1-persist).*(1./(1+exp(-GAIN.*I))); 
 end

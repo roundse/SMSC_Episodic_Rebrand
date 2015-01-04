@@ -31,6 +31,9 @@ global w_pfc_to_pfc;
 global w_hpc_to_hpc;
 % ------------------------------
 
+global w_place_to_food;
+global w_food_to_place;
+
 global lesion_pfc;
 global lesion_hpc;
 global is_testing;
@@ -39,6 +42,9 @@ global run_hpc;
 global run_pfc;
 global switch_lesion;
 
+global place_out;
+global food_out;
+    
 global place_activity;
 
 if lesion_pfc | lesion_hpc
@@ -83,11 +89,15 @@ for j = 2:cycles
 
     cycle_place(place_out, w_hpc_to_place, hpc_out);
     cycle_place(place_out, w_pfc_to_place, pfc_out);
+    
+    cycle_place(place_out, w_food_to_place, food_out);
 
     cycle_food(food_out, f_eye, food_stim);
     
     cycle_food(food_out, w_hpc_to_food, hpc_out);
     cycle_food(food_out, w_pfc_to_food, pfc_out);
+    
+    cycle_food(food_out, w_place_to_food, place_out);
 
     if run_hpc
         cycle_hpc(hpc_out, w_place_to_hpc, place_out, value);
@@ -155,4 +165,27 @@ hpc_average = hpc_average + mean(hpc);
 pfc_average = pfc_average + mean(pfc);
 
 place_activity = final_place_activity;
+end
+
+function decay_hpc()
+
+    global w_hpc_to_place;
+    global w_hpc_to_food;
+    global w_place_to_hpc;
+    global w_food_to_hpc;
+
+    decay_weights(w_hpc_to_place);
+    decay_weights(w_hpc_to_food);
+    decay_weights(w_place_to_hpc);
+    decay_weights(w_food_to_hpc);
+
+end
+
+function w = decay_weights(w)
+
+    global decay;
+    half_d = decay/2;
+    wd = half_d*rand(size(w)) - half_d;
+    w = w + wd;
+
 end

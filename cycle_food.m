@@ -22,6 +22,11 @@ function returnable = cycle_food(food_in, input_weights, input)
     
     global run_hpc;
     global run_pfc;
+  
+    global w_food_to_place;
+    
+    global place_out;
+    global food_out;
     
     food_eye = eye(FOOD_CELLS);
       
@@ -40,7 +45,7 @@ function returnable = cycle_food(food_in, input_weights, input)
         len = length(total_inputs);
         for p=1:len
             total_inputs(p) = total_inputs(p) + ...
-                             ((total_inputs(p) - sum(total_inputs)));
+                             ((total_inputs(p) - sum(total_inputs)) / len);
         end
         
         total_inputs = total_inputs - [total_inputs(2) total_inputs(1)];
@@ -61,6 +66,10 @@ function returnable = cycle_food(food_in, input_weights, input)
             [w_pfc_to_food w_food_to_pfc] = recurrent_oja(food_out, ...
                 food_in, pfc_in, w_pfc_to_food, w_food_to_pfc, PVAL);
             is_pfc = 0;
+        end
+        
+        if pfc_learning
+            w_food_to_place = oja(food_out, place_out, w_food_to_place, HVAL);
         end
 
         food_in_queue = {};

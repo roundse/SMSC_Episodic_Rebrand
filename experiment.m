@@ -4,8 +4,6 @@ global TRIAL_DIR;
 global GAIN;
 GAIN = 5;
 
-global test_learning;
-
 % to do
 % - store lesion prefs based on peanut / worm
 % - display at end of trial or store
@@ -14,42 +12,35 @@ global test_learning;
 
 initialize_weights(cycles, is_disp_weights, VALUE);
 
-if (test_learning)
-    run_test_protocol(cycles, is_disp_weights, VALUE);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PRE: Agent stores both foods. Consolidates 124 hours and is allowed to
+% retrieve the foods. Learns worms decay.
+% Then agent stores both foods. Consolidates 4 hours and then is
+% allowed to retrieve the foods. Learns worms are still good.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-else
+run_protocol('pre_training', cycles, is_disp_weights, VALUE);
+%%%%%%%%%%%%%%%%%%%%%%
+% Don't give it training, Emily, no matter how you may want to
+%%%%%%%%%%%%%%%%%%%%%%
+%run_protocol('training', cycles, is_disp_weights, VALUE);
+% filename = horzcat(TRIAL_DIR, 'after training', '_variables');
+% save(filename);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % PRE: Agent stores both foods. Consolidates 124 hours and is allowed to
-    % retrieve the foods. Learns worms decay.
-    % Then agent stores both foods. Consolidates 4 hours and then is
-    % allowed to retrieve the foods. Learns worms are still good.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% run_empty();
 
-    run_protocol('pre_training', cycles, is_disp_weights, VALUE);
-    %%%%%%%%%%%%%%%%%%%%%%
-    % Don't give it training, Emily, no matter how you may want to
-    %%%%%%%%%%%%%%%%%%%%%%
-    %run_protocol('training', cycles, is_disp_weights, VALUE);
-    % filename = horzcat(TRIAL_DIR, 'after training', '_variables');
-    % save(filename);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
+% stores the second food, and consolidates the leftover time.
+% Then gets to recover its caches.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    % run_empty();
+% show_weights('before testing',1);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % TESTING: Agent stores one food, consolidates either 4 or 124 hours, then
-    % stores the second food, and consolidates the leftover time.
-    % Then gets to recover its caches.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    % show_weights('before testing',1);
-
-    [worm_trial pean_trial] = ...
+[worm_trial pean_trial] = ...
     run_protocol('testing', cycles, is_disp_weights, VALUE);
 
-    % show_weights('after testing',1);
-
-end
+% show_weights('after testing',1);
 
 global debug_sides;
 global r_pfc_lesion_prefs_avg;
@@ -114,62 +105,6 @@ else
     end
 %     places = [start : finish];
 end
-end
-
-function [worm_trial pean_trial] = ...
-    run_test_protocol (prot_type, cycles, is_disp_weights, VALUE)
-    global pfc_learning;
-    global hpc_learning;
-    global HVAL;
-    global PVAL;
-    global REPL; global PILF; global DEGR;
-    
-    global is_replenish;
-    is_replenish = 1;
-    
-    global is_testing;
-    is_testing = 0;
-    
-    value = DEGR;
-    tests = 10;
-    cycles = 5;
-    
-    values = [DEGR; REPL; PILF];
-    val_length = length(values);
-    
-    side_prefs = zeros(2,tests);
-
-    for j=1:tests
-        for i=1:val_length
-            value = values(i,:);
-
-            pfc_learning = 1;
-            hpc_learning = 1;
-            
-            for k=1:1
-                reward_stim(value, cycles, 0);
-            end
-            
-            [checked_places, side_pref, avg_checks, first_checked] ...
-                = place_slot_check;
-            
-            show_weights('short testing',1);
-
-            side_prefs(i,j) = side_pref;
-            initialize_weights(cycles, 0, DEGR);
-        end
-    end
-    
-    disp('---------------------------');
-    for j=1:val_length
-        prefs = side_prefs(j,:);
-        good_prefs = prefs(prefs>0);
-        mean_pref = mean(good_prefs');
-        percent_fail = length(good_prefs) / length(prefs);
-        variance = var(good_prefs);
-        pref_pFail_var = [mean_pref percent_fail variance]
-    end
-    
 end
 
 function [worm_trial pean_trial] = ...
@@ -261,9 +196,6 @@ else
     duration = 4;
 end
 
-global IS_STORING;
-IS_STORING = 0;
-
 global hpc_average;
 global pfc_average;
 
@@ -338,7 +270,6 @@ for j=1:duration
 
         pfc_learning = 1;
         hpc_learning = 1;
-        IS_STORING = 1;
         if is_testing
             pfc_learning = 0;
         end
@@ -353,16 +284,12 @@ for j=1:duration
                     place(i,:) = current_type;
                 end
 
-                VAL_PAIR = REPL;
-                ACT_VAL = 1 / (1 + REPL(1) + REPL(2));
-                
                 HVAL = v;
                 PVAL = v;
-                % CACHING
-                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles*2, v);
+                %disp('Caching phase: ');
+                cycle_net(PLACE_SLOTS(i,:), place(i,:), cycles/2, v);
             end 
         end
-        IS_STORING = 0;
         pfc_learning = 0;
         hpc_learning = 0;
 
@@ -396,7 +323,7 @@ for j=1:duration
         % TURN THIS ON/OF FOR LEARNING DURING TESTING/TRAINING
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if is_testing
-            pfc_learning = 0;
+            pfc_learning = 1;
             hpc_learning = 1;
         end
 
@@ -473,8 +400,7 @@ for j=1:duration
         last_side = current_type;
         
         if ~is_testing && ~is_training % this means pre-training
-            pfc_learning = 1;
-            hpc_learning = 1;
+
             PVAL = v;
             HVAL = v;
             %         end
@@ -482,6 +408,8 @@ for j=1:duration
             disp('PRE-TRAINING Place slot check');
             [checked_places, side_pref, avg_checks, first_checked] ...
                 = place_slot_check;
+            pfc_learning = 1;
+            hpc_learning = 1;
             reward_stim(value, cycles, is_replenish);
         end
         if ~is_training && ~is_testing
@@ -597,12 +525,12 @@ global place;
 global is_testing;
 global ACT_VAL;
 
-% global w_pfc_to_hpc;
+global w_pfc_to_hpc;
 
-% figure;
-% imagesc(w_pfc_to_hpc);
-% colorbar;
-% drawnow;
+figure;
+imagesc(w_pfc_to_hpc);
+colorbar;
+drawnow;
 
 if ~is_testing
     if is_replenish
@@ -675,9 +603,9 @@ end
 function initialize_weights(cycles, is_disp_weights, VALUE)
 
     global HPC_SIZE;
-    HPC_SIZE = 200;                 % 2 x 14 possible combinations multipled
+    HPC_SIZE = 250;                 % 2 x 14 possible combinations multipled
     global PFC_SIZE;
-    PFC_SIZE = 200;
+    PFC_SIZE = 250;
 
     % by 10 for random connectivity of 10%
     global FOOD_CELLS;
@@ -686,7 +614,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     PLACE_CELLS = 14;
 
     EXT_CONNECT = 0.1;                   % Chance of connection = 20%
-    INT_CONNECT = 0.1;
+    INT_CONNECT = 0.0;
 
     global worm;
     global peanut;
@@ -779,7 +707,7 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
     w_pfc_to_place = w_place_to_pfc';
 
     global w_pfc_to_hpc;
-    w_pfc_to_hpc = 0 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
+    w_pfc_to_hpc = -0.00000005 .* (rand(PFC_SIZE, HPC_SIZE) < EXT_CONNECT);
     global w_pfc_to_hpc_init;
     w_pfc_to_hpc_init = w_pfc_to_hpc;
     global w_pfc_to_hpc_prev
@@ -824,19 +752,26 @@ function initialize_weights(cycles, is_disp_weights, VALUE)
 
     % HPC WEIGHTS
     global w_hpc_to_hpc;
-    w_hpc_to_hpc = -0.4 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
+    w_hpc_to_hpc = 0.0 .* (rand(HPC_SIZE, HPC_SIZE) < INT_CONNECT);
 
-    w_food_to_hpc = 0.2 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_food_to_hpc = 0.1 .* (rand(FOOD_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_food = w_food_to_hpc';
-    w_place_to_hpc = 0.2 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
+    w_place_to_hpc = 0.1 .* (rand(PLACE_CELLS, HPC_SIZE) < EXT_CONNECT);
     w_hpc_to_place = w_place_to_hpc';
 
     global w_hpc_to_place_init;
     global w_place_to_hpc_init;
-
+    
     w_hpc_to_place_init = w_hpc_to_place;
     w_place_to_hpc_init = w_place_to_hpc;
 
+    
+	global w_place_to_food;
+    global w_food_to_place;
+    
+    w_place_to_food = 0.1 .* (rand(PLACE_CELLS, FOOD_CELLS) < EXT_CONNECT);
+    w_food_to_place = w_place_to_food';
+    
     global hpc;
     global place_region;
     global food;

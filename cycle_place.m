@@ -23,10 +23,15 @@ function returnable = cycle_place(place_in, input_weights, input)
 
     global place_side_inhibit;
     
+    global place_out;
+    global food_out;
+    
     global run_hpc;
     global run_pfc;
 
     global REPL;
+    
+    global w_place_to_food;
     
     place_eye = eye(PLACE_CELLS);
     w_place_to_place = zeros(PLACE_CELLS);
@@ -47,7 +52,7 @@ function returnable = cycle_place(place_in, input_weights, input)
         len = length(total_inputs);
         for p=1:len
             total_inputs(p) = total_inputs(p) + ...
-                             ((total_inputs(p) - sum(total_inputs)));
+                             ((total_inputs(p) - sum(total_inputs)) / len);
         end
 
         place_out = activity(place_in, place_eye, total_inputs, ...
@@ -56,18 +61,21 @@ function returnable = cycle_place(place_in, input_weights, input)
         returnable = place_out;
 
         if hpc_learning & run_hpc
-                      
             [w_hpc_to_place w_place_to_hpc] = recurrent_oja(place_out, place_in, ...
                 hpc_in, w_hpc_to_place, w_place_to_hpc, HVAL);
         end
         
-        if pfc_learning & run_pfc
+        if pfc_learning
             is_pfc = 1;
             [w_pfc_to_place w_place_to_pfc] = recurrent_oja(place_out, place_in, ...
                 pfc_in, w_pfc_to_place, w_place_to_pfc, PVAL);
             is_pfc = 0;
         end
-
+        
+        if pfc_learning & run_pfc
+            w_place_to_food = oja(place_out, food_out, w_place_to_food, HVAL);
+        end
+        
         place_in_queue = {};
     else
         % return the weights given if no weight in queue

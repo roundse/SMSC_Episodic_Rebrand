@@ -70,8 +70,6 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     global lesion_pfc;
     global lesion_hpc;
     
-    global is_testing;
-    
     lesion_pfc_init = lesion_pfc;
     lesion_hpc_init = lesion_hpc;
     
@@ -108,10 +106,7 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     neutral_input = ones(1,14);
 
     %injection_current = rand(1,14); % <-- used for forgetting
-    p = 1;
-    i = 0;
-    trial_failed = 0;
-    while (p < 15)
+    for p = 1:PLACE_CELLS
         injection_current = neutral_input/(15-p) +(rand(1,14) - 0.5 ); % <-- used for the eleminating input model
 
         final_place_activity = cycle_net(injection_current, [0 0], cycles, 0);
@@ -119,23 +114,8 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
         save_state(p);
 
         avg = final_place_activity;
-        [slot_signal ranked_slot min_var] = find_place(avg); % <-- used for the eleminating input model
-        
-        if (ranked_slot ~= -1)
-            ranked_slots(p) = ranked_slot;
-            min_vars(p) = min_var;
-            p = p +1;
-        else
-           i = i + 1; 
-        end
-        
-        if i > 6
-%            disp('danger will robinson');
-           trial_failed = 1;
-           break;
-        end
-        
-        %         neutral_input = neutral_input - slot_signal; % <-- used for the eleminating input model
+        [slot_signal ranked_slots(p) min_vars(p)] = find_place(avg); % <-- used for the eleminating input model
+%         neutral_input = neutral_input - slot_signal; % <-- used for the eleminating input model
         % cycle_net(slot_signal, [0 0], cycles, -1); % <-- used forgetting
         %model
     end
@@ -146,15 +126,10 @@ function [checked_places, side_pref, avg_checks, first_checked] = run_side_check
     avg_checks = ranked_slots';
 
     if debug
-%         rank_and_variance = [ranked_slots min_vars]
+        rank_and_variance = [ranked_slots min_vars]
     end
     
     first_checked = avg_checks(1)<8;
-    
-    if trial_failed
-        side_pref = -1;
-        first_checked = -1;
-    end
 
     lesion_pfc = lesion_pfc_init;
     lesion_hpc = lesion_hpc_init;
@@ -172,13 +147,12 @@ function place_outputs = place_norm_activity ()
     IS_CHECKING = 1;
     HVAL = 0;
     
-    runs = 1;
+    runs = 4;
     
     place_outputs = zeros(PLACE_CELLS);
 
     for i = 1:runs
-        spots = spot_shuffler(1,14);
-        for p = 1:14
+        for p = 1:PLACE_CELLS
             injection_current = PLACE_SLOTS(p,:);
 
             place_outputs(p,:) = place_outputs(p,:) + ...
@@ -197,21 +171,17 @@ function [slot_signal slot min_var] = find_place(place_response)
     vars = zeros(PLACE_CELLS,1);
 
     for i = 1:length(stored_place_responses);
-        vars(i) = sum(var([stored_place_responses(i,:); place_response]));
+        vars(i) = sum(var([stored_place_responses(i,:); ...
+            place_response]));
     end
-         
+       
     min_var = min(vars);
     slot = find(vars==min(vars));
     slot = slot(1); % in the unlikely (but still occuring) event there are multiple minimums, just take the first
     slot_signal = stored_place_responses(slot, :);
-
-    total_var = sum(vars);
-        
-    if (total_var <= 0.01)
-      slot = -1;
-    else
-        stored_place_responses(slot,:) = stored_place_responses(slot,:)*0 - 35;        
-    end
+    a = -2*ones(1,14);
+    fs = stored_place_responses(slot,:);
+    stored_place_responses(slot,:) = stored_place_responses(slot,:)*0 - 35;
 end
 
 function side_pref = side_pref_calc (ranked_slots, msg)
@@ -221,23 +191,6 @@ function side_pref = side_pref_calc (ranked_slots, msg)
     first_side(ranked_slots<8) = 1;
  
     side_pref = sum(first_side(1:7));
-%     disp(horzcat(msg,'Worms in first seven checks: '));
-%     disp(side_pref);
-end
-
-function places = spot_shuffler (start, finish)
-if (nargin == 1)
-    places = randperm(start);
-%     places = [1 : start];
-else
-    range = finish - start+1;
-    numsets = (start : finish);
-    perm = randperm(range);
-    
-    for i=1:range
-        p = perm(i);
-        places(i) = numsets(p);
-    end
-%     places = [start : finish];
-end
+    disp(horzcat(msg,'Worms in first seven checks: '));
+    disp(side_pref);
 end
